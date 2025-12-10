@@ -99,9 +99,9 @@
         {{/* Image */}}
         <div class="ti-article-image">
           {{ with .Params.image }}
-          <img src="{{ . | relURL }}" alt="{{ $.Title }}">
+          <img src="{{ . | relURL }}" alt="{{ $.Title }}" onerror="this.onerror=null; this.src='/images/default.png';">
           {{ else }}
-          <img src="{{ site.Params.default_image | relURL }}" alt="{{ $.Title }}">
+          <img src="/images/default.png" alt="{{ $.Title }}">
           {{ end }}
 
           {{/* Category Badge */}}

@@ -56,7 +56,8 @@
     {{ with .Params.image }}
     <div class="ti-post-image">
         <div class="ti-container">
-            <img src="{{ . | relURL }}" alt="{{ $.Title }}" loading="lazy">
+            <img src="{{ . | relURL }}" alt="{{ $.Title }}" loading="lazy"
+                onerror="this.onerror=null; this.src='/images/default.png';">
         </div>
     </div>
     {{ end }}
@@ -131,9 +132,10 @@
                 <article class="ti-article-card">
                     <div class="ti-article-image" style="height: 12rem;">
                         {{ with .Params.image }}
-                        <img src="{{ . | relURL }}" alt="{{ $.Title }}" loading="lazy">
+                        <img src="{{ . | relURL }}" alt="{{ $.Title }}" loading="lazy"
+                            onerror="this.onerror=null; this.src='/images/default.png';">
                         {{ else }}
-                        <img src="{{ site.Params.default_image | relURL }}" alt="{{ $.Title }}" loading="lazy">
+                        <img src="/images/default.png" alt="{{ $.Title }}" loading="lazy">
                         {{ end }}
                     </div>
                     <div class="ti-article-content">

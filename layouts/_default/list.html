@@ -23,9 +23,10 @@
                 {{/* Image */}}
                 <div class="ti-article-image">
                     {{ with .Params.image }}
-                    <img src="{{ . | relURL }}" alt="{{ $.Title }}" loading="lazy">
+                    <img src="{{ . | relURL }}" alt="{{ $.Title }}" loading="lazy"
+                        onerror="this.onerror=null; this.src='/images/default.png';">
                     {{ else }}
-                    <img src="{{ site.Params.default_image | relURL }}" alt="{{ $.Title }}" loading="lazy">
+                    <img src="/images/default.png" alt="{{ $.Title }}" loading="lazy">
                     {{ end }}
 
                     {{/* Category Badge */}}

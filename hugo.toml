@@ -2,8 +2,8 @@
 # Hugo Site Configuration - Tech Insights 科技洞察
 # =============================================================================
 
-baseURL = 'https://example.org/'
-title = 'Tech Insights'
+baseURL = 'https://fluxio.dev/'
+title = 'fluxio'
 theme = 'parsa'
 
 # Default language
@@ -106,9 +106,9 @@ enableRobotsTXT = true
   tech_insights = true
   
   # ========== Logo ==========
-  logo = 'images/logo.svg'
-  logo_text = 'TI'
-  site_name = 'Tech Insights'
+  logo = 'images/logo.png'
+  logo_text = 'fluxio'
+  site_name = 'fluxio'
 
   # ========== Default & OG Images ==========
   default_image = 'images/default-og.jpg'
