@@ -12,39 +12,39 @@
   /* 主要色彩 (HSL) */
   --ti-background: 35 100% 98%;
   --ti-foreground: 20 20% 25%;
-  
+
   --ti-card: 0 0% 100%;
   --ti-card-foreground: 20 20% 25%;
-  
+
   --ti-primary: 340 75% 75%;
   --ti-primary-foreground: 0 0% 100%;
-  
+
   --ti-secondary: 200 70% 85%;
   --ti-secondary-foreground: 20 20% 25%;
-  
+
   --ti-muted: 45 60% 95%;
   --ti-muted-foreground: 20 15% 50%;
-  
+
   --ti-accent: 160 60% 80%;
   --ti-accent-foreground: 20 20% 25%;
-  
+
   --ti-border: 40 30% 90%;
-  
+
   /* 漸層 */
   --ti-gradient-primary: linear-gradient(135deg, hsl(340 75% 85%), hsl(30 90% 85%), hsl(200 70% 85%));
   --ti-gradient-hero: linear-gradient(180deg, hsl(200 60% 95%), hsl(340 60% 95%));
   --ti-gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(200 40% 98%));
-  
+
   /* 陰影 */
   --ti-shadow-soft: 0 10px 40px hsl(340 50% 70% / 0.15);
   --ti-shadow-card: 0 8px 32px hsl(200 40% 60% / 0.12);
   --ti-shadow-watercolor: 0 4px 20px hsl(340 60% 70% / 0.2), 0 0 60px hsl(200 60% 80% / 0.15);
-  
+
   /* 圓角 */
   --ti-radius: 1.5rem;
   --ti-radius-sm: 1rem;
   --ti-radius-lg: 2rem;
-  
+
   /* 過渡動畫 */
   --ti-transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   --ti-transition-fast: all 0.2s ease-out;
@@ -248,33 +248,31 @@ body.tech-insights {
 }
 
 .ti-hero-stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-  max-width: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  flex-wrap: wrap;
   margin: 0 auto;
-}
-
-@media (min-width: 768px) {
-  .ti-hero-stats {
-    grid-template-columns: repeat(4, 1fr);
-  }
 }
 
 .ti-hero-stat {
   text-align: center;
+  min-width: 100px;
 }
 
 .ti-hero-stat-value {
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: 700;
   color: hsl(var(--ti-primary));
   font-family: 'Noto Serif JP', serif;
+  line-height: 1.2;
 }
 
 .ti-hero-stat-label {
-  font-size: 0.875rem;
+  font-size: 1.125rem;
   color: hsl(var(--ti-muted-foreground));
+  font-weight: 500;
 }
 
 /* Hero 裝飾光暈 */
@@ -303,8 +301,17 @@ body.tech-insights {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
+
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
 }
 
 /* =============================================================================
@@ -605,12 +612,29 @@ body.tech-insights {
   color: white;
 }
 
-.ti-category-icon.ai { background: linear-gradient(135deg, #3b82f6, #06b6d4); }
-.ti-category-icon.web { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
-.ti-category-icon.cloud { background: linear-gradient(135deg, #22c55e, #14b8a6); }
-.ti-category-icon.mobile { background: linear-gradient(135deg, #f97316, #ef4444); }
-.ti-category-icon.security { background: linear-gradient(135deg, #6366f1, #3b82f6); }
-.ti-category-icon.data { background: linear-gradient(135deg, #eab308, #f97316); }
+.ti-category-icon.ai {
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+}
+
+.ti-category-icon.web {
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+}
+
+.ti-category-icon.cloud {
+  background: linear-gradient(135deg, #22c55e, #14b8a6);
+}
+
+.ti-category-icon.mobile {
+  background: linear-gradient(135deg, #f97316, #ef4444);
+}
+
+.ti-category-icon.security {
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+}
+
+.ti-category-icon.data {
+  background: linear-gradient(135deg, #eab308, #f97316);
+}
 
 .ti-category-name {
   font-size: 1.25rem;
@@ -863,11 +887,11 @@ body.tech-insights {
   .ti-navbar-menu {
     display: none;
   }
-  
+
   .ti-mobile-toggle {
     display: block;
   }
-  
+
   .ti-navbar-menu.active {
     display: flex;
     flex-direction: column;
@@ -881,12 +905,12 @@ body.tech-insights {
     border-bottom: 2px solid hsl(var(--ti-border));
     gap: 0;
   }
-  
+
   .ti-navbar-menu.active li {
     padding: 0.75rem 0;
     border-bottom: 1px solid hsl(var(--ti-border));
   }
-  
+
   .ti-navbar-menu.active li:last-child {
     border-bottom: none;
   }

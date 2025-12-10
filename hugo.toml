@@ -7,7 +7,7 @@ title = 'Tech Insights'
 theme = 'parsa'
 
 # Default language
-defaultContentLanguage = 'zh-TW'
+defaultContentLanguage = 'en'
 defaultContentLanguageInSubdir = false
 
 # Enable robots.txt and sitemap generation

@@ -60,17 +60,24 @@
       {{ end }}
     </div>
 
-    {{/* Stats */}}
-    {{ with site.Params.hero.stats }}
+    {{/* Stats - Using Real Data */}}
+    {{ $posts := where site.RegularPages "Section" "posts" }}
+    {{ $categories := site.Taxonomies.categories }}
+    {{ $tags := site.Taxonomies.tags }}
     <div class="ti-hero-stats">
-      {{ range . }}
       <div class="ti-hero-stat">
-        <div class="ti-hero-stat-value">{{ .value }}</div>
-        <div class="ti-hero-stat-label">{{ .label }}</div>
+        <div class="ti-hero-stat-value">{{ len $posts }}</div>
+        <div class="ti-hero-stat-label">{{ i18n "posts" | default "Articles" }}</div>
       </div>
-      {{ end }}
+      <div class="ti-hero-stat">
+        <div class="ti-hero-stat-value">{{ len $categories }}</div>
+        <div class="ti-hero-stat-label">{{ i18n "categories" | default "Categories" }}</div>
+      </div>
+      <div class="ti-hero-stat">
+        <div class="ti-hero-stat-value">{{ len $tags }}</div>
+        <div class="ti-hero-stat-label">{{ i18n "tags" | default "Tags" }}</div>
+      </div>
     </div>
-    {{ end }}
   </div>
 </section>
 {{ end }}
