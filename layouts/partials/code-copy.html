@@ -1,0 +1,92 @@
+{{/*
+Code Block Copy Button Support
+Adds a copy button to all code blocks with syntax highlighting
+*/}}
+
+<style>
+    /* Copy button container */
+    .highlight {
+        position: relative;
+    }
+
+    /* Copy button styling */
+    .copy-button {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        padding: 4px 8px;
+        font-size: 12px;
+        color: #aaa;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s ease, background 0.2s ease;
+        z-index: 10;
+    }
+
+    .highlight:hover .copy-button {
+        opacity: 1;
+    }
+
+    .copy-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+    }
+
+    .copy-button.copied {
+        color: #4caf50;
+        border-color: #4caf50;
+    }
+
+    /* Ensure pre has enough padding for button */
+    .highlight pre {
+        padding-top: 2.5em;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Find all code blocks
+        const codeBlocks = document.querySelectorAll('.highlight');
+
+        codeBlocks.forEach(function (block) {
+            // Create copy button
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = 'Copy';
+            button.setAttribute('aria-label', 'Copy code to clipboard');
+
+            // Add click handler
+            button.addEventListener('click', async function () {
+                // Get the code content
+                const code = block.querySelector('code');
+                if (!code) return;
+
+                const text = code.innerText;
+
+                try {
+                    await navigator.clipboard.writeText(text);
+                    button.textContent = 'Copied!';
+                    button.classList.add('copied');
+
+                    // Reset after 2 seconds
+                    setTimeout(function () {
+                        button.textContent = 'Copy';
+                        button.classList.remove('copied');
+                    }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy:', err);
+                    button.textContent = 'Failed';
+                    setTimeout(function () {
+                        button.textContent = 'Copy';
+                    }, 2000);
+                }
+            });
+
+            // Insert button into the highlight container
+            block.insertBefore(button, block.firstChild);
+        });
+    });
+</script>
