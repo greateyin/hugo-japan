@@ -105,6 +105,12 @@
   {{ $styles := resources.Get "css/style.css" | minify }}
   <link rel="stylesheet" href="{{ $styles.Permalink }}" media="screen">
 
+  {{/* ========== Syntax Highlighting CSS ========== */}}
+  {{ $syntax := resources.Get "css/syntax.css" }}
+  {{ if $syntax }}
+  <link rel="stylesheet" href="{{ $syntax.Permalink }}" media="screen">
+  {{ end }}
+
   {{/* ========== Custom CSS ========== */}}
   {{ with site.Params.custom_css }}
   <link rel="stylesheet" href="{{ . | absURL }}">
