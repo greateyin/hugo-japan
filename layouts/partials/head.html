@@ -112,6 +112,11 @@
   {{ end }}
 
   {{/* ========== Custom CSS ========== */}}
+  {{ $customCSS := resources.Get "css/custom.css" }}
+  {{ if $customCSS }}
+  {{ $customCSSMin := $customCSS | minify }}
+  <link rel="stylesheet" href="{{ $customCSSMin.Permalink }}" media="screen">
+  {{ end }}
   {{ with site.Params.custom_css }}
   <link rel="stylesheet" href="{{ . | absURL }}">
   {{ end }}

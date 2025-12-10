@@ -1,0 +1,220 @@
+{{/* Tech Insights - Custom Navbar with Language Switcher */}}
+<header class="ti-navbar">
+    <div class="ti-container" style="display: flex; align-items: center; justify-content: space-between; height: 64px;">
+        {{/* Logo */}}
+        <a href="{{ site.BaseURL | relLangURL }}" class="ti-navbar-brand">
+            <div class="ti-navbar-logo">
+                <span>{{ site.Params.logo_text | default "TI" }}</span>
+            </div>
+            <span class="ti-navbar-title">{{ site.Params.site_name | default site.Title }}</span>
+        </a>
+
+        {{/* Desktop Menu */}}
+        <ul class="ti-navbar-menu" id="ti-menu">
+            {{ range site.Menus.main }}
+            <li>
+                <a href="{{ .URL | relLangURL }}">{{ .Name }}</a>
+            </li>
+            {{ end }}
+        </ul>
+
+        {{/* Right Actions */}}
+        <div class="ti-navbar-actions">
+            {{/* Language Switcher */}}
+            <div class="ti-lang-switcher">
+                <button type="button" class="ti-lang-btn" onclick="toggleLangMenu()" aria-label="Switch language">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path
+                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                        </path>
+                    </svg>
+                    <span class="ti-lang-current">{{ .Language.LanguageName }}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+                <div class="ti-lang-dropdown" id="ti-lang-dropdown">
+                    {{ if .IsTranslated }}
+                    {{ range .Translations }}
+                    <a href="{{ .Permalink }}" class="ti-lang-option">
+                        {{ .Language.LanguageName }}
+                    </a>
+                    {{ end }}
+                    <a href="{{ .Permalink }}" class="ti-lang-option active">
+                        {{ .Language.LanguageName }}
+                    </a>
+                    {{ else }}
+                    {{ range site.Languages }}
+                    <a href="{{ site.BaseURL }}{{ if ne .Lang site.Language.Lang }}{{ .Lang }}/{{ end }}"
+                        class="ti-lang-option{{ if eq .Lang $.Language.Lang }} active{{ end }}">
+                        {{ .LanguageName }}
+                    </a>
+                    {{ end }}
+                    {{ end }}
+                </div>
+            </div>
+
+            {{/* Search Button */}}
+            <button type="button" class="ti-btn ti-btn-outline" style="padding: 0.5rem;" onclick="toggleSearch()"
+                aria-label="Search">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
+
+            {{/* Mobile Menu Toggle */}}
+            <button type="button" class="ti-mobile-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="menu-icon">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="close-icon"
+                    style="display: none;">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    {{/* Search Bar (Hidden by default) */}}
+    <div id="ti-search-bar" style="display: none; padding: 1rem; border-top: 1px solid hsl(var(--ti-border));">
+        <div class="ti-container">
+            <form action="{{ " search" | relLangURL }}/" method="get" style="display: flex; gap: 0.5rem;">
+                <input type="search" name="q" class="ti-newsletter-input" placeholder="{{ i18n " search_placeholder" |
+                    default "Search..." }}" style="flex: 1;">
+                <button type="submit" class="ti-btn ti-btn-primary">
+                    {{ i18n "search" | default "Search" }}
+                </button>
+            </form>
+        </div>
+    </div>
+</header>
+
+{{/* Spacer for fixed navbar */}}
+<div style="height: 64px;"></div>
+
+<style>
+    /* Language Switcher Styles */
+    .ti-lang-switcher {
+        position: relative;
+    }
+
+    .ti-lang-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: transparent;
+        border: 2px solid hsl(var(--ti-border));
+        border-radius: var(--ti-radius);
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: hsl(var(--ti-foreground));
+        transition: var(--ti-transition-fast);
+    }
+
+    .ti-lang-btn:hover {
+        border-color: hsl(var(--ti-primary) / 0.4);
+        background: hsl(var(--ti-card));
+    }
+
+    .ti-lang-current {
+        display: none;
+    }
+
+    @media (min-width: 768px) {
+        .ti-lang-current {
+            display: inline;
+        }
+    }
+
+    .ti-lang-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        margin-top: 0.5rem;
+        min-width: 150px;
+        background: hsl(var(--ti-card));
+        border: 2px solid hsl(var(--ti-border));
+        border-radius: var(--ti-radius-sm);
+        box-shadow: var(--ti-shadow-soft);
+        display: none;
+        z-index: 100;
+        overflow: hidden;
+    }
+
+    .ti-lang-dropdown.show {
+        display: block;
+    }
+
+    .ti-lang-option {
+        display: block;
+        padding: 0.75rem 1rem;
+        color: hsl(var(--ti-foreground));
+        text-decoration: none;
+        transition: var(--ti-transition-fast);
+    }
+
+    .ti-lang-option:hover {
+        background: hsl(var(--ti-muted));
+    }
+
+    .ti-lang-option.active {
+        background: hsl(var(--ti-primary) / 0.1);
+        color: hsl(var(--ti-primary));
+        font-weight: 600;
+    }
+</style>
+
+<script>
+    function toggleMobileMenu() {
+        const menu = document.getElementById('ti-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
+
+        menu.classList.toggle('active');
+
+        if (menu.classList.contains('active')) {
+            menuIcon.style.display = 'none';
+            closeIcon.style.display = 'block';
+        } else {
+            menuIcon.style.display = 'block';
+            closeIcon.style.display = 'none';
+        }
+    }
+
+    function toggleSearch() {
+        const searchBar = document.getElementById('ti-search-bar');
+        if (searchBar.style.display === 'none') {
+            searchBar.style.display = 'block';
+            searchBar.querySelector('input').focus();
+        } else {
+            searchBar.style.display = 'none';
+        }
+    }
+
+    function toggleLangMenu() {
+        const dropdown = document.getElementById('ti-lang-dropdown');
+        dropdown.classList.toggle('show');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function (e) {
+        const switcher = document.querySelector('.ti-lang-switcher');
+        const dropdown = document.getElementById('ti-lang-dropdown');
+        if (switcher && !switcher.contains(e.target)) {
+            dropdown.classList.remove('show');
+        }
+    });
+</script>

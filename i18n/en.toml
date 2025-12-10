@@ -84,3 +84,26 @@ other = "Try different keywords or check your spelling"
 
 [no_posts_found]
 other = "No posts found."
+
+# Tech Insights specific translations
+[featured_articles]
+other = "Featured Articles"
+
+[featured_articles_desc]
+other = "Latest and most popular tech content"
+
+[subscribe]
+other = "Subscribe"
+
+[resources]
+other = "Resources"
+
+[other]
+other = "Other"
+
+[explore_articles]
+other = "Explore Articles"
+
+[about_us]
+other = "About Us"
+

@@ -1,80 +1,85 @@
 {{/*
-  Search Page Layout - Client-side search using Fuse.js
+Search Page Layout - Tech Insights Style with Fuse.js
 */}}
 {{ define "main" }}
-<section class="section">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 mx-auto">
-        <h1 class="mb-4">{{ .Title }}</h1>
-        
-        {{/* Search Input */}}
-        <div class="search-box mb-4">
-          <div class="input-group input-group-lg">
-            <div class="input-group-prepend">
-              <span class="input-group-text bg-white border-right-0">
-                <i class="ti-search"></i>
-              </span>
-            </div>
-            <input 
-              type="text" 
-              id="search-input" 
-              class="form-control border-left-0" 
-              placeholder="{{ i18n "search_placeholder" | default "Type to search..." }}"
-              autofocus
-              autocomplete="off"
-            >
-            <div class="input-group-append">
-              <button class="btn btn-outline-secondary" type="button" id="clear-search">
-                <i class="ti-close"></i>
-              </button>
-            </div>
-          </div>
-          <small class="text-muted mt-2 d-block">
-            {{ i18n "search_hint" | default "Search by title, content, tags, or categories" }}
-          </small>
-        </div>
 
-        {{/* Search Stats */}}
-        <div id="search-stats" class="mb-3 text-muted" style="display: none;">
-          <span id="results-count">0</span> {{ i18n "results_found" | default "results found" }}
-          <span id="search-time" class="ml-2"></span>
-        </div>
+{{/* Page Header */}}
+<section class="ti-page-header">
+  <div class="ti-container">
+    <h1 class="ti-page-title">{{ .Title }}</h1>
+  </div>
+</section>
 
-        {{/* Search Results */}}
-        <div id="search-results" class="search-results">
-          {{/* Results will be inserted here by JavaScript */}}
-        </div>
+{{/* Search Section */}}
+<section class="ti-search">
+  <div class="ti-container">
+    <div class="ti-search-wrapper">
 
-        {{/* No Results Message */}}
-        <div id="no-results" class="text-center py-5" style="display: none;">
-          <i class="ti-face-sad display-4 text-muted mb-3 d-block"></i>
-          <h4 class="text-muted">{{ i18n "no_results" | default "No results found" }}</h4>
-          <p class="text-muted">{{ i18n "try_different_keywords" | default "Try different keywords or check your spelling" }}</p>
+      {{/* Search Input */}}
+      <div class="ti-search-box">
+        <div class="ti-search-input-wrapper">
+          <svg class="ti-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="search-input" class="ti-search-input" placeholder="{{ i18n " search_placeholder" |
+            default "Type to search..." }}" autofocus autocomplete="off">
+          <button type="button" class="ti-search-clear" id="clear-search" aria-label="Clear search">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
         </div>
-
-        {{/* Initial State - Show recent posts */}}
-        <div id="initial-state">
-          <h4 class="mb-3 text-muted">{{ i18n "recent_posts" | default "Recent Posts" }}</h4>
-          <div class="list-group">
-            {{ $posts := where site.RegularPages "Section" "posts" }}
-            {{ range first 10 $posts }}
-            <a href="{{ .Permalink }}" class="list-group-item list-group-item-action">
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <h6 class="mb-1">{{ .Title }}</h6>
-                  {{ with .Description }}
-                  <small class="text-muted">{{ . | truncate 60 }}</small>
-                  {{ end }}
-                </div>
-                <small class="text-muted">{{ .Date.Format "2006-01-02" }}</small>
-              </div>
-            </a>
-            {{ end }}
-          </div>
-        </div>
-
+        <p class="ti-search-hint">{{ i18n "search_hint" | default "Search by title, content, tags, or categories" }}</p>
       </div>
+
+      {{/* Search Stats */}}
+      <div id="search-stats" class="ti-search-stats" style="display: none;">
+        <span id="results-count">0</span> {{ i18n "results_found" | default "results found" }}
+        <span id="search-time" class="ti-search-time"></span>
+      </div>
+
+      {{/* Search Results */}}
+      <div id="search-results" class="ti-search-results"></div>
+
+      {{/* No Results Message */}}
+      <div id="no-results" class="ti-empty-state" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <h3>{{ i18n "no_results" | default "No results found" }}</h3>
+        <p>{{ i18n "try_different_keywords" | default "Try different keywords or check your spelling" }}</p>
+      </div>
+
+      {{/* Initial State - Show recent posts */}}
+      <div id="initial-state">
+        <h3 class="ti-section-subtitle">{{ i18n "recent_posts" | default "Recent Posts" }}</h3>
+        <div class="ti-search-results">
+          {{ $posts := where site.RegularPages "Section" "posts" }}
+          {{ range first 10 $posts }}
+          <a href="{{ .Permalink }}" class="ti-search-result-card">
+            <div class="ti-search-result-content">
+              <h4 class="ti-search-result-title">{{ .Title }}</h4>
+              {{ with .Description }}
+              <p class="ti-search-result-desc">{{ . | truncate 80 }}</p>
+              {{ end }}
+            </div>
+            <div class="ti-search-result-meta">
+              <span>{{ .Date.Format "Jan 02, 2006" }}</span>
+              {{ with .Params.categories }}
+              <span class="ti-tag">{{ index . 0 }}</span>
+              {{ end }}
+            </div>
+          </a>
+          {{ end }}
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -82,209 +87,330 @@
 {{/* Fuse.js for fuzzy search */}}
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
 
-{{/* Search Index Data */}}
+{{/* Search Index Data - Using safeJS for proper escaping */}}
+{{ $searchData := slice }}
+{{ range where site.RegularPages "Section" "posts" }}
+{{ $item := dict
+"title" .Title
+"permalink" .Permalink
+"description" (default "" .Description)
+"content" (.Plain | truncate 5000)
+"date" (.Date.Format "Jan 02, 2006")
+"categories" (default (slice) .Params.categories)
+"tags" (default (slice) .Params.tags)
+}}
+{{ $searchData = $searchData | append $item }}
+{{ end }}
 <script>
-const searchIndex = [
-  {{ range where site.RegularPages "Section" "posts" }}
-  {
-    "title": {{ .Title | jsonify }},
-    "permalink": {{ .Permalink | jsonify }},
-    "description": {{ with .Description }}{{ . | jsonify }}{{ else }}""{{ end }},
-    "content": {{ .Plain | truncate 5000 | jsonify }},
-    "date": {{ .Date.Format "2006-01-02" | jsonify }},
-    "categories": {{ with .Params.categories }}{{ . | jsonify }}{{ else }}[]{{ end }},
-    "tags": {{ with .Params.tags }}{{ . | jsonify }}{{ else }}[]{{ end }}
-  },
-  {{ end }}
-];
+  const searchIndex = {{ $searchData | jsonify | safeJS }};
 </script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const searchInput = document.getElementById('search-input');
-  const searchResults = document.getElementById('search-results');
-  const searchStats = document.getElementById('search-stats');
-  const resultsCount = document.getElementById('results-count');
-  const searchTime = document.getElementById('search-time');
-  const noResults = document.getElementById('no-results');
-  const initialState = document.getElementById('initial-state');
-  const clearBtn = document.getElementById('clear-search');
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+    const searchStats = document.getElementById('search-stats');
+    const resultsCount = document.getElementById('results-count');
+    const searchTime = document.getElementById('search-time');
+    const noResults = document.getElementById('no-results');
+    const initialState = document.getElementById('initial-state');
+    const clearBtn = document.getElementById('clear-search');
 
-  // Fuse.js options
-  const fuseOptions = {
-    keys: [
-      { name: 'title', weight: 0.4 },
-      { name: 'description', weight: 0.3 },
-      { name: 'content', weight: 0.2 },
-      { name: 'tags', weight: 0.05 },
-      { name: 'categories', weight: 0.05 }
-    ],
-    threshold: 0.3,
-    ignoreLocation: true,
-    minMatchCharLength: 2,
-    includeScore: true,
-    includeMatches: true
-  };
-
-  const fuse = new Fuse(searchIndex, fuseOptions);
-
-  // Debounce function
-  function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
+    const fuseOptions = {
+      keys: [
+        { name: 'title', weight: 0.4 },
+        { name: 'description', weight: 0.3 },
+        { name: 'content', weight: 0.2 },
+        { name: 'tags', weight: 0.05 },
+        { name: 'categories', weight: 0.05 }
+      ],
+      threshold: 0.3,
+      ignoreLocation: true,
+      minMatchCharLength: 2,
+      includeScore: true,
+      includeMatches: true
     };
-  }
 
-  // Highlight matching text
-  function highlightMatches(text, matches, key) {
-    if (!matches) return text;
-    const match = matches.find(m => m.key === key);
-    if (!match) return text;
-    
-    let result = text;
-    const indices = match.indices.sort((a, b) => b[0] - a[0]);
-    
-    for (const [start, end] of indices) {
-      if (start < result.length) {
-        const before = result.slice(0, start);
-        const matched = result.slice(start, end + 1);
-        const after = result.slice(end + 1);
-        result = before + '<mark>' + matched + '</mark>' + after;
+    const fuse = new Fuse(searchIndex, fuseOptions);
+
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    function highlightMatches(text, matches, key) {
+      if (!matches) return text;
+      const match = matches.find(m => m.key === key);
+      if (!match) return text;
+
+      let result = text;
+      const indices = match.indices.sort((a, b) => b[0] - a[0]);
+
+      for (const [start, end] of indices) {
+        if (start < result.length) {
+          const before = result.slice(0, start);
+          const matched = result.slice(start, end + 1);
+          const after = result.slice(end + 1);
+          result = before + '<mark>' + matched + '</mark>' + after;
+        }
       }
-    }
-    
-    return result;
-  }
 
-  // Render search results
-  function renderResults(results) {
-    if (results.length === 0) {
-      searchResults.innerHTML = '';
-      noResults.style.display = 'block';
-      searchStats.style.display = 'none';
-      return;
+      return result;
     }
 
-    noResults.style.display = 'none';
-    searchStats.style.display = 'block';
-    resultsCount.textContent = results.length;
+    function renderResults(results) {
+      if (results.length === 0) {
+        searchResults.innerHTML = '';
+        noResults.style.display = 'block';
+        searchStats.style.display = 'none';
+        return;
+      }
 
-    const html = results.map(result => {
-      const item = result.item;
-      const title = highlightMatches(item.title, result.matches, 'title');
-      const description = item.description 
-        ? highlightMatches(item.description, result.matches, 'description')
-        : '';
-      
-      const tags = item.tags.length > 0 
-        ? item.tags.map(t => `<span class="badge badge-light mr-1">${t}</span>`).join('')
-        : '';
-      
-      const categories = item.categories.length > 0
-        ? item.categories.map(c => `<span class="badge badge-secondary mr-1">${c}</span>`).join('')
-        : '';
+      noResults.style.display = 'none';
+      searchStats.style.display = 'block';
+      resultsCount.textContent = results.length;
 
-      return `
-        <div class="search-result-item card mb-3">
-          <div class="card-body">
-            <h5 class="card-title mb-1">
-              <a href="${item.permalink}">${title}</a>
-            </h5>
-            ${description ? `<p class="card-text text-muted small mb-2">${description}</p>` : ''}
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                ${categories}
-                ${tags}
-              </div>
-              <small class="text-muted">${item.date}</small>
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('');
+      const html = results.map(result => {
+        const item = result.item;
+        const title = highlightMatches(item.title, result.matches, 'title');
+        const description = item.description
+          ? highlightMatches(item.description, result.matches, 'description')
+          : '';
 
-    searchResults.innerHTML = html;
-  }
+        const tags = item.tags && item.tags.length > 0
+          ? item.tags.slice(0, 3).map(t => '<span class="ti-tag">' + t + '</span>').join('')
+          : '';
 
-  // Search function
-  const performSearch = debounce(function(query) {
-    if (query.length < 2) {
+        const categories = item.categories && item.categories.length > 0
+          ? item.categories.map(c => '<span class="ti-article-badge" style="position:static;font-size:0.7rem;">' + c + '</span>').join('')
+          : '';
+
+        return '<a href="' + item.permalink + '" class="ti-search-result-card">' +
+          '<div class="ti-search-result-content">' +
+          '<h4 class="ti-search-result-title">' + title + '</h4>' +
+          (description ? '<p class="ti-search-result-desc">' + description + '</p>' : '') +
+          '</div>' +
+          '<div class="ti-search-result-meta">' +
+          '<span>' + item.date + '</span>' +
+          categories +
+          tags +
+          '</div>' +
+          '</a>';
+      }).join('');
+
+      searchResults.innerHTML = html;
+    }
+
+    const performSearch = debounce(function (query) {
+      if (query.length < 2) {
+        searchResults.innerHTML = '';
+        searchStats.style.display = 'none';
+        noResults.style.display = 'none';
+        initialState.style.display = 'block';
+        return;
+      }
+
+      initialState.style.display = 'none';
+
+      const startTime = performance.now();
+      const results = fuse.search(query);
+      const endTime = performance.now();
+
+      searchTime.textContent = '(' + (endTime - startTime).toFixed(1) + 'ms)';
+
+      renderResults(results);
+    }, 200);
+
+    searchInput.addEventListener('input', function (e) {
+      performSearch(e.target.value.trim());
+    });
+
+    clearBtn.addEventListener('click', function () {
+      searchInput.value = '';
       searchResults.innerHTML = '';
       searchStats.style.display = 'none';
       noResults.style.display = 'none';
       initialState.style.display = 'block';
-      return;
+      searchInput.focus();
+    });
+
+    // Check URL for search query
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryParam = urlParams.get('q') || urlParams.get('s');
+    if (queryParam) {
+      searchInput.value = queryParam;
+      performSearch(queryParam);
     }
-
-    initialState.style.display = 'none';
-    
-    const startTime = performance.now();
-    const results = fuse.search(query);
-    const endTime = performance.now();
-    
-    searchTime.textContent = `(${(endTime - startTime).toFixed(1)}ms)`;
-    
-    renderResults(results);
-  }, 200);
-
-  // Event listeners
-  searchInput.addEventListener('input', function(e) {
-    performSearch(e.target.value.trim());
   });
-
-  clearBtn.addEventListener('click', function() {
-    searchInput.value = '';
-    searchResults.innerHTML = '';
-    searchStats.style.display = 'none';
-    noResults.style.display = 'none';
-    initialState.style.display = 'block';
-    searchInput.focus();
-  });
-
-  // Check URL for search query
-  const urlParams = new URLSearchParams(window.location.search);
-  const queryParam = urlParams.get('q');
-  if (queryParam) {
-    searchInput.value = queryParam;
-    performSearch(queryParam);
-  }
-});
 </script>
 
 <style>
-.search-box .form-control:focus {
-  box-shadow: none;
-  border-color: #ced4da;
-}
-.search-box .input-group-text {
-  border-color: #ced4da;
-}
-.search-result-item {
-  transition: box-shadow 0.2s ease;
-}
-.search-result-item:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-.search-result-item .card-title a {
-  color: #333;
-  text-decoration: none;
-}
-.search-result-item .card-title a:hover {
-  color: #007bff;
-}
-.search-result-item mark {
-  background-color: #fff3cd;
-  padding: 0 2px;
-  border-radius: 2px;
-}
-#clear-search {
-  border-color: #ced4da;
-}
+  .ti-search {
+    padding: 2rem 0 5rem;
+  }
+
+  .ti-search-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .ti-search-box {
+    margin-bottom: 2rem;
+  }
+
+  .ti-search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .ti-search-icon {
+    position: absolute;
+    left: 1.25rem;
+    width: 24px;
+    height: 24px;
+    color: hsl(var(--ti-muted-foreground));
+    pointer-events: none;
+  }
+
+  .ti-search-input {
+    width: 100%;
+    padding: 1.25rem 3.5rem;
+    font-size: 1.125rem;
+    background: hsl(var(--ti-card));
+    border: 2px solid hsl(var(--ti-border));
+    border-radius: var(--ti-radius-lg);
+    color: hsl(var(--ti-foreground));
+    transition: var(--ti-transition-fast);
+  }
+
+  .ti-search-input:focus {
+    outline: none;
+    border-color: hsl(var(--ti-primary));
+    box-shadow: var(--ti-shadow-soft);
+  }
+
+  .ti-search-input::placeholder {
+    color: hsl(var(--ti-muted-foreground));
+  }
+
+  .ti-search-clear {
+    position: absolute;
+    right: 1rem;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: hsl(var(--ti-muted-foreground));
+    transition: var(--ti-transition-fast);
+  }
+
+  .ti-search-clear:hover {
+    color: hsl(var(--ti-foreground));
+  }
+
+  .ti-search-clear svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .ti-search-hint {
+    font-size: 0.875rem;
+    color: hsl(var(--ti-muted-foreground));
+    margin-top: 0.75rem;
+    text-align: center;
+  }
+
+  .ti-search-stats {
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+    color: hsl(var(--ti-muted-foreground));
+  }
+
+  .ti-search-time {
+    font-size: 0.875rem;
+    margin-left: 0.5rem;
+  }
+
+  .ti-search-results {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .ti-search-result-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    background: hsl(var(--ti-card));
+    border: 2px solid hsl(var(--ti-border));
+    border-radius: var(--ti-radius);
+    text-decoration: none;
+    color: inherit;
+    transition: var(--ti-transition);
+  }
+
+  .ti-search-result-card:hover {
+    border-color: hsl(var(--ti-primary) / 0.4);
+    box-shadow: var(--ti-shadow-soft);
+    transform: translateY(-2px);
+  }
+
+  .ti-search-result-content {
+    flex: 1;
+  }
+
+  .ti-search-result-title {
+    font-size: 1.125rem;
+    font-family: 'Noto Serif JP', serif;
+    margin-bottom: 0.5rem;
+    transition: var(--ti-transition-fast);
+  }
+
+  .ti-search-result-card:hover .ti-search-result-title {
+    color: hsl(var(--ti-primary));
+  }
+
+  .ti-search-result-desc {
+    font-size: 0.875rem;
+    color: hsl(var(--ti-muted-foreground));
+    line-height: 1.5;
+  }
+
+  .ti-search-result-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: hsl(var(--ti-muted-foreground));
+  }
+
+  .ti-search-result-card mark {
+    background: hsl(45 100% 80%);
+    padding: 0 2px;
+    border-radius: 2px;
+  }
+
+  @media (min-width: 640px) {
+    .ti-search-result-card {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ti-search-result-meta {
+      flex-shrink: 0;
+    }
+  }
 </style>
+
 {{ end }}

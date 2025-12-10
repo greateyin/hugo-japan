@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="{{ with site.LanguageCode }}{{ . }}{{ else }}en-US{{ end }}">
+{{- partial "head.html" . -}}
+<body{{ if site.Params.tech_insights }} class="tech-insights" {{ end }}>
+    {{- partial "preloader.html" . -}}
+
+    {{/* Use custom header for Tech Insights, otherwise use theme header */}}
+    {{ if site.Params.tech_insights }}
+    {{- partial "header-custom.html" . -}}
+    {{ else }}
+    {{- partial "header.html" . -}}
+    {{ end }}
+
+    {{- block "main" . }}{{- end }}
+
+    {{/* Use custom footer for Tech Insights, otherwise use theme footer */}}
+    {{ if site.Params.tech_insights }}
+    {{- partial "footer-custom.html" . -}}
+    {{ else }}
+    {{- partial "footer.html" . -}}
+    {{ end }}
+    </body>
+
+</html>

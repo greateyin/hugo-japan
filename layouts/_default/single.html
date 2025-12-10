@@ -1,0 +1,378 @@
+{{ define "main" }}
+{{/* Tech Insights Single Post Layout */}}
+
+{{/* Check if blog post */}}
+{{ if or (eq .Section "post") (eq .Section "posts") (eq .Section "blog") (eq .Section "blogs") }}
+
+{{/* Post Header */}}
+<article class="ti-single-post">
+    <header class="ti-post-header">
+        <div class="ti-container">
+            {{/* Categories */}}
+            {{ with .Params.categories }}
+            <div class="ti-post-categories">
+                {{ range . }}
+                <a href="{{ " categories" | relLangURL }}/{{ . | urlize }}/" class="ti-article-badge">{{ . | humanize
+                    }}</a>
+                {{ end }}
+            </div>
+            {{ end }}
+
+            <h1 class="ti-post-title">{{ .Title }}</h1>
+
+            {{/* Meta */}}
+            <div class="ti-post-meta">
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    {{ site.Params.author | default "Author" }}
+                </span>
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    {{ .PublishDate.Format "Jan 02, 2006" }}
+                </span>
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    {{ .ReadingTime }} {{ i18n "minute_read" | default "min read" }}
+                </span>
+            </div>
+        </div>
+    </header>
+
+    {{/* Featured Image */}}
+    {{ with .Params.image }}
+    <div class="ti-post-image">
+        <div class="ti-container">
+            <img src="{{ . | relURL }}" alt="{{ $.Title }}" loading="lazy">
+        </div>
+    </div>
+    {{ end }}
+
+    {{/* Content */}}
+    <div class="ti-post-content">
+        <div class="ti-container">
+            <div class="ti-post-body">
+                {{ .Content }}
+            </div>
+
+            {{/* Tags */}}
+            {{ with .Params.tags }}
+            <div class="ti-post-tags">
+                <span class="ti-post-tags-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                        <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                    </svg>
+                    {{ i18n "tags" | default "Tags" }}:
+                </span>
+                {{ range . }}
+                <a href="{{ " tags" | relLangURL }}/{{ . | urlize }}/" class="ti-tag">{{ . }}</a>
+                {{ end }}
+            </div>
+            {{ end }}
+
+            {{/* Share */}}
+            <div class="ti-post-share">
+                <span>{{ i18n "share" | default "Share" }}:</span>
+                <div class="ti-share-buttons">
+                    <a href="https://twitter.com/intent/tweet?url={{ .Permalink }}&text={{ .Title | urlquery }}"
+                        target="_blank" rel="noopener" class="ti-share-btn" aria-label="Share on Twitter">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z">
+                            </path>
+                        </svg>
+                    </a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ .Permalink }}" target="_blank"
+                        rel="noopener" class="ti-share-btn" aria-label="Share on Facebook">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                    </a>
+                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ .Permalink }}&title={{ .Title | urlquery }}"
+                        target="_blank" rel="noopener" class="ti-share-btn" aria-label="Share on LinkedIn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
+                            </path>
+                            <rect x="2" y="9" width="4" height="12"></rect>
+                            <circle cx="4" cy="4" r="2"></circle>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{/* Related Posts */}}
+    {{ $related := .Site.RegularPages.Related . | first 3 }}
+    {{ with $related }}
+    <section class="ti-related-posts">
+        <div class="ti-container">
+            <h2 class="ti-section-title">{{ i18n "related_posts" | default "Related Posts" }}</h2>
+            <div class="ti-articles-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                {{ range . }}
+                <article class="ti-article-card">
+                    <div class="ti-article-image" style="height: 12rem;">
+                        {{ with .Params.image }}
+                        <img src="{{ . | relURL }}" alt="{{ $.Title }}" loading="lazy">
+                        {{ else }}
+                        <img src="{{ site.Params.default_image | relURL }}" alt="{{ $.Title }}" loading="lazy">
+                        {{ end }}
+                    </div>
+                    <div class="ti-article-content">
+                        <h3 class="ti-article-title" style="font-size: 1rem;">
+                            <a href="{{ .Permalink }}">{{ .Title }}</a>
+                        </h3>
+                        <div class="ti-article-meta">
+                            <span>{{ .PublishDate.Format "Jan 02, 2006" }}</span>
+                        </div>
+                    </div>
+                </article>
+                {{ end }}
+            </div>
+        </div>
+    </section>
+    {{ end }}
+</article>
+
+{{ else }}
+{{/* Regular Page */}}
+<section class="ti-page-header">
+    <div class="ti-container">
+        <h1 class="ti-page-title">{{ .Title }}</h1>
+    </div>
+</section>
+
+<section class="ti-articles" style="padding-top: 2rem;">
+    <div class="ti-container">
+        <div class="ti-post-body">
+            {{ with .Params.image }}
+            <img src="{{ . | relURL }}" alt="{{ $.Title }}" class="ti-content-image" loading="lazy">
+            {{ end }}
+            {{ .Content }}
+        </div>
+    </div>
+</section>
+{{ end }}
+
+<style>
+    /* Single Post Styles */
+    .ti-single-post {
+        background: hsl(var(--ti-background));
+    }
+
+    .ti-post-header {
+        padding: 3rem 0 2rem;
+        background: linear-gradient(to bottom, hsl(var(--ti-secondary) / 0.2), hsl(var(--ti-background)));
+        text-align: center;
+    }
+
+    .ti-post-categories {
+        margin-bottom: 1rem;
+    }
+
+    .ti-post-categories .ti-article-badge {
+        text-decoration: none;
+        margin: 0 0.25rem;
+    }
+
+    .ti-post-title {
+        font-size: clamp(1.75rem, 5vw, 3rem);
+        font-family: 'Noto Serif JP', serif;
+        max-width: 900px;
+        margin: 0 auto 1.5rem;
+        line-height: 1.3;
+    }
+
+    .ti-post-meta {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.5rem;
+        color: hsl(var(--ti-muted-foreground));
+    }
+
+    .ti-post-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .ti-post-meta svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .ti-post-image {
+        padding: 2rem 0;
+    }
+
+    .ti-post-image img {
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+        display: block;
+        border-radius: var(--ti-radius-lg);
+        box-shadow: var(--ti-shadow-watercolor);
+    }
+
+    .ti-post-content {
+        padding: 2rem 0 4rem;
+    }
+
+    .ti-post-body {
+        max-width: 800px;
+        margin: 0 auto;
+        font-size: 1.125rem;
+        line-height: 1.8;
+    }
+
+    .ti-post-body h2,
+    .ti-post-body h3,
+    .ti-post-body h4 {
+        font-family: 'Noto Serif JP', serif;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .ti-post-body p {
+        margin-bottom: 1.5rem;
+    }
+
+    .ti-post-body img {
+        max-width: 100%;
+        border-radius: var(--ti-radius);
+        margin: 2rem 0;
+    }
+
+    .ti-post-body pre {
+        background: hsl(var(--ti-foreground));
+        color: hsl(var(--ti-background));
+        padding: 1.5rem;
+        border-radius: var(--ti-radius);
+        overflow-x: auto;
+        margin: 1.5rem 0;
+    }
+
+    .ti-post-body code {
+        font-family: 'Fira Code', monospace;
+    }
+
+    .ti-post-body blockquote {
+        border-left: 4px solid hsl(var(--ti-primary));
+        padding-left: 1.5rem;
+        margin: 1.5rem 0;
+        font-style: italic;
+        color: hsl(var(--ti-muted-foreground));
+    }
+
+    .ti-post-body a {
+        color: hsl(var(--ti-primary));
+        text-decoration: underline;
+    }
+
+    .ti-post-body ul,
+    .ti-post-body ol {
+        margin: 1rem 0 1.5rem 1.5rem;
+    }
+
+    .ti-post-body li {
+        margin-bottom: 0.5rem;
+    }
+
+    /* Post Tags */
+    .ti-post-tags {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 2rem 0;
+        border-top: 2px solid hsl(var(--ti-border));
+        margin-top: 2rem;
+    }
+
+    .ti-post-tags-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+    }
+
+    .ti-post-tags-label svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Share */
+    .ti-post-share {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.5rem 0;
+        border-top: 2px solid hsl(var(--ti-border));
+    }
+
+    .ti-post-share span {
+        font-weight: 600;
+    }
+
+    .ti-share-buttons {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .ti-share-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: hsl(var(--ti-card));
+        border: 2px solid hsl(var(--ti-border));
+        color: hsl(var(--ti-foreground));
+        transition: var(--ti-transition);
+    }
+
+    .ti-share-btn:hover {
+        background: hsl(var(--ti-primary) / 0.1);
+        border-color: hsl(var(--ti-primary) / 0.4);
+        color: hsl(var(--ti-primary));
+    }
+
+    .ti-share-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Related Posts */
+    .ti-related-posts {
+        padding: 3rem 0;
+        background: linear-gradient(to bottom, hsl(var(--ti-muted) / 0.2), hsl(var(--ti-background)));
+    }
+
+    .ti-content-image {
+        width: 100%;
+        border-radius: var(--ti-radius);
+        margin-bottom: 2rem;
+    }
+</style>
+
+{{ end }}

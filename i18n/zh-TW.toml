@@ -84,3 +84,26 @@ other = "嘗試其他關鍵詞或檢查拼寫"
 
 [no_posts_found]
 other = "暫無文章"
+
+# Tech Insights specific translations
+[featured_articles]
+other = "精選文章"
+
+[featured_articles_desc]
+other = "最新且最受歡迎的科技內容"
+
+[subscribe]
+other = "訂閱電子報"
+
+[resources]
+other = "資源"
+
+[other]
+other = "其他"
+
+[explore_articles]
+other = "探索文章"
+
+[about_us]
+other = "關於我們"
+

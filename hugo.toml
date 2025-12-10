@@ -1,13 +1,13 @@
 # =============================================================================
-# Hugo Site Configuration
+# Hugo Site Configuration - Tech Insights 科技洞察
 # =============================================================================
 
 baseURL = 'https://example.org/'
-title = 'My New Hugo Site'
+title = 'Tech Insights'
 theme = 'parsa'
 
 # Default language
-defaultContentLanguage = 'en'
+defaultContentLanguage = 'zh-TW'
 defaultContentLanguageInSubdir = false
 
 # Enable robots.txt and sitemap generation
@@ -23,27 +23,27 @@ enableRobotsTXT = true
     languageCode = 'en-US'
     languageName = 'English'
     weight = 1
-    title = 'My New Hugo Site'
+    title = 'Tech Insights'
     [languages.en.params]
-      description = 'A modern Hugo blog with Parsa theme'
-
-  [languages.zh-CN]
-    contentDir = 'content/zh-CN'
-    languageCode = 'zh-CN'
-    languageName = '简体中文'
-    weight = 2
-    title = '我的 Hugo 網站'
-    [languages.zh-CN.params]
-      description = '一个使用 Parsa 主题的现代 Hugo 博客'
+      description = 'Explore the latest tech trends, development tips, and industry insights. A professional tech blog for developers and tech enthusiasts.'
 
   [languages.zh-TW]
     contentDir = 'content/zh-TW'
     languageCode = 'zh-TW'
     languageName = '繁體中文'
-    weight = 3
-    title = '我的 Hugo 網站'
+    weight = 2
+    title = 'Tech Insights 科技洞察'
     [languages.zh-TW.params]
-      description = '一個使用 Parsa 主題的現代 Hugo 部落格'
+      description = '探索最新科技趨勢、程式開發技巧和產業洞察。專業的科技部落格，為開發者和科技愛好者提供深度內容。'
+
+  [languages.zh-CN]
+    contentDir = 'content/zh-CN'
+    languageCode = 'zh-CN'
+    languageName = '简体中文'
+    weight = 3
+    title = 'Tech Insights 科技洞察'
+    [languages.zh-CN.params]
+      description = '探索最新科技趋势、程序开发技巧和产业洞察。专业的科技博客，为开发者和科技爱好者提供深度内容。'
 
 # =============================================================================
 # Sitemap Configuration
@@ -98,42 +98,179 @@ enableRobotsTXT = true
 
 [params]
   # Site description (used for SEO meta)
-  description = 'A modern Hugo blog with Parsa theme'
-  author = 'Your Name'
-  layout = "1"
+  description = 'Explore the latest tech trends, development tips, and industry insights'
+  author = 'Tech Insights Team'
+  layout = "3"  # Use custom Tech Insights layout
+  
+  # Enable custom Tech Insights design
+  tech_insights = true
   
   # ========== Logo ==========
   logo = 'images/logo.svg'
+  logo_text = 'TI'
+  site_name = 'Tech Insights'
 
   # ========== Default & OG Images ==========
-  # Used when a page has no image defined
   default_image = 'images/default-og.jpg'
   og_image = 'images/og-image.jpg'
+
+  # ========== Hero Section ==========
+  [params.hero]
+    enable = true
+    badge = "Latest Tech Trends & Deep Analysis"
+    title_prefix = "Explore the"
+    title_highlight = "Infinite Possibilities"
+    subtitle = "In-depth analysis of AI, Web Development, Cloud Technologies and more. Professional insights for developers and tech enthusiasts."
+    primary_button = "Explore Articles"
+    secondary_button = "About Us"
+    background_image = "images/hero-tech.jpg"
+
+  # ========== Hero Stats ==========
+  [[params.hero.stats]]
+    value = "200+"
+    label = "Articles"
+  [[params.hero.stats]]
+    value = "50K+"
+    label = "Monthly Visitors"
+  [[params.hero.stats]]
+    value = "10K+"
+    label = "Subscribers"
+  [[params.hero.stats]]
+    value = "30+"
+    label = "Tech Topics"
+
+  # ========== Categories Section ==========
+  [params.categories_section]
+    enable = true
+    title = "Explore Topics"
+    subtitle = "From AI to Data Science, covering the hottest tech fields"
+
+  [[params.categories_section.items]]
+    name = "Artificial Intelligence"
+    icon = "brain"
+    color = "ai"
+    count = 45
+    slug = "ai"
+
+  [[params.categories_section.items]]
+    name = "Web Development"
+    icon = "code"
+    color = "web"
+    count = 67
+    slug = "web-development"
+
+  [[params.categories_section.items]]
+    name = "Cloud Technology"
+    icon = "cloud"
+    color = "cloud"
+    count = 38
+    slug = "cloud"
+
+  [[params.categories_section.items]]
+    name = "Mobile Development"
+    icon = "smartphone"
+    color = "mobile"
+    count = 29
+    slug = "mobile"
+
+  [[params.categories_section.items]]
+    name = "Cybersecurity"
+    icon = "shield"
+    color = "security"
+    count = 34
+    slug = "security"
+
+  [[params.categories_section.items]]
+    name = "Data Science"
+    icon = "database"
+    color = "data"
+    count = 41
+    slug = "data-science"
+
+  # ========== Newsletter Section ==========
+  [params.newsletter]
+    enable = true
+    title = "Subscribe to Our Newsletter"
+    subtitle = "Get the latest tech articles, trend analysis, and exclusive content every week - completely free!"
+    placeholder = "Enter your email"
+    button = "Subscribe Now"
+    disclaimer = "We respect your privacy and will never share your email with third parties"
+
+  # ========== Footer ==========
+  [params.footer]
+    copyright = "© 2024 Tech Insights. All rights reserved."
+    description = "Explore the latest tech trends, development tips, and industry insights. A professional tech blog for developers and tech enthusiasts."
+
+  [[params.footer.about]]
+    label = "About Us"
+    url = "#about"
+  [[params.footer.about]]
+    label = "Authors"
+    url = "#authors"
+  [[params.footer.about]]
+    label = "Contact"
+    url = "#contact"
+
+  [[params.footer.resources]]
+    label = "All Articles"
+    url = "#articles"
+  [[params.footer.resources]]
+    label = "Categories"
+    url = "#categories"
+  [[params.footer.resources]]
+    label = "Tags"
+    url = "#tags"
+
+  [[params.footer.legal]]
+    label = "Privacy Policy"
+    url = "#privacy"
+  [[params.footer.legal]]
+    label = "Terms of Use"
+    url = "#terms"
+  [[params.footer.legal]]
+    label = "RSS Feed"
+    url = "/index.xml"
+
+  # ========== Social Links ==========
+  [[params.social]]
+    icon = "github"
+    link = "https://github.com"
+    label = "GitHub"
+
+  [[params.social]]
+    icon = "twitter"
+    link = "https://twitter.com"
+    label = "Twitter"
+
+  [[params.social]]
+    icon = "linkedin"
+    link = "https://linkedin.com"
+    label = "LinkedIn"
+
+  [[params.social]]
+    icon = "mail"
+    link = "mailto:hello@techinsights.com"
+    label = "Email"
 
   # ========== Twitter ==========
   # twitter_site = 'your_twitter_handle'
   # twitter_creator = 'your_twitter_handle'
 
   # ========== Google Analytics (GA4) ==========
-  # Set your GA4 Measurement ID (e.g., G-XXXXXXXXXX)
   # google_analytics = 'G-XXXXXXXXXX'
 
   # ========== Facebook Pixel ==========
-  # Set your Facebook Pixel ID
   # facebook_pixel = 'XXXXXXXXXXXXXXX'
 
   # ========== Google AdSense ==========
-  # Set your AdSense Publisher ID (e.g., ca-pub-XXXXXXXXXXXXXXXX)
   # google_adsense = 'ca-pub-XXXXXXXXXXXXXXXX'
 
   # ========== Google Fonts ==========
-  # Format: family=Font+Name:wght@400;700&family=Another+Font
-  # google_fonts = 'family=Inter:wght@400;500;600;700&family=Fira+Code'
+  google_fonts = 'family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700'
 
   # ========== Mermaid Diagrams ==========
-  # Enable globally (can also enable per-page with mermaid: true in front matter)
   # mermaid = true
-  # mermaid_theme = 'default'  # Options: default, dark, forest, neutral
+  # mermaid_theme = 'default'
   # mermaid_font = 'inherit'
 
   # ========== Geo SEO ==========
@@ -151,3 +288,38 @@ enableRobotsTXT = true
     # External JS plugins
     [[params.plugins.js]]
       link = ''
+
+# =============================================================================
+# Menus
+# =============================================================================
+
+[menus]
+  [[menus.main]]
+    identifier = "home"
+    name = "Home"
+    url = "/"
+    weight = 1
+
+  [[menus.main]]
+    identifier = "articles"
+    name = "Articles"
+    url = "/posts/"
+    weight = 2
+
+  [[menus.main]]
+    identifier = "categories"
+    name = "Categories"
+    url = "/categories/"
+    weight = 3
+
+  [[menus.main]]
+    identifier = "archives"
+    name = "Archives"
+    url = "/archives/"
+    weight = 4
+
+  [[menus.main]]
+    identifier = "search"
+    name = "Search"
+    url = "/search/"
+    weight = 5
