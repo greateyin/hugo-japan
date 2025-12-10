@@ -1,0 +1,110 @@
+{{/*
+Archives Layout - Posts grouped by Year/Month/Day (newest first)
+*/}}
+{{ define "main" }}
+<section class="section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <h1 class="mb-4">{{ .Title }}</h1>
+
+        {{ if .Content }}
+        <div class="content mb-5">
+          {{ .Content }}
+        </div>
+        {{ end }}
+
+
+        {{/* Get all regular pages sorted by date descending */}}
+        {{ $pages := where site.RegularPages "Section" "posts" }}
+        {{ $pages = $pages | lang.Merge (where site.RegularPages "Section" "post") }}
+
+        {{/* Group by Year */}}
+        {{ range $pages.GroupByDate "2006" }}
+        <div class="archive-year mb-4">
+          <h2 class="archive-year-title border-bottom pb-2 mb-3">
+            <i class="ti-calendar mr-2"></i>{{ .Key }}
+          </h2>
+
+          {{/* Group by Month within Year */}}
+          {{ range .Pages.GroupByDate "January" }}
+          <div class="archive-month ml-3 mb-3">
+            <h3 class="archive-month-title h5 text-muted mb-2">
+              {{ .Key }}
+              <span class="badge badge-secondary ml-2">{{ len .Pages }}</span>
+            </h3>
+
+            <ul class="archive-posts list-unstyled ml-3">
+              {{ range .Pages }}
+              <li class="archive-post-item py-2 border-bottom">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div class="archive-post-content">
+                    <a href="{{ .Permalink }}" class="archive-post-title h6 mb-1 d-block">
+                      {{ .Title }}
+                    </a>
+                    {{ with .Description }}
+                    <p class="archive-post-desc text-muted small mb-0">{{ . | truncate 80 }}</p>
+                    {{ end }}
+                  </div>
+                  <div class="archive-post-meta text-right text-nowrap ml-3">
+                    <time datetime="{{ .Date.Format " 2006-01-02" }}" class="text-muted small">
+                      {{ .Date.Format "01-02" }}
+                    </time>
+                    {{ if .Params.categories }}
+                    <div class="mt-1">
+                      {{ range first 1 .Params.categories }}
+                      <span class="badge badge-light">{{ . }}</span>
+                      {{ end }}
+                    </div>
+                    {{ end }}
+                  </div>
+                </div>
+              </li>
+              {{ end }}
+            </ul>
+          </div>
+          {{ end }}
+        </div>
+        {{ end }}
+
+        {{/* If no posts found */}}
+        {{ if eq (len $pages) 0 }}
+        <div class="alert alert-info">
+          {{ i18n "no_posts_found" | default "No posts found." }}
+        </div>
+        {{ end }}
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .archive-year-title {
+    color: #333;
+    font-weight: 600;
+  }
+
+  .archive-month-title {
+    font-weight: 500;
+  }
+
+  .archive-post-item {
+    transition: background-color 0.2s ease;
+  }
+
+  .archive-post-item:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+
+  .archive-post-title {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .archive-post-title:hover {
+    color: #007bff;
+  }
+</style>
+{{ end }}

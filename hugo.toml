@@ -1,0 +1,147 @@
+# =============================================================================
+# Hugo Site Configuration
+# =============================================================================
+
+baseURL = 'https://example.org/'
+title = 'My New Hugo Site'
+theme = 'parsa'
+
+# Default language
+defaultContentLanguage = 'en'
+defaultContentLanguageInSubdir = false
+
+# Enable robots.txt and sitemap generation
+enableRobotsTXT = true
+
+# =============================================================================
+# Multilingual Configuration
+# =============================================================================
+
+[languages]
+  [languages.en]
+    contentDir = 'content/en'
+    languageCode = 'en-US'
+    languageName = 'English'
+    weight = 1
+    title = 'My New Hugo Site'
+    [languages.en.params]
+      description = 'A modern Hugo blog with Parsa theme'
+
+  [languages.zh-CN]
+    contentDir = 'content/zh-CN'
+    languageCode = 'zh-CN'
+    languageName = '简体中文'
+    weight = 2
+    title = '我的 Hugo 網站'
+    [languages.zh-CN.params]
+      description = '一个使用 Parsa 主题的现代 Hugo 博客'
+
+  [languages.zh-TW]
+    contentDir = 'content/zh-TW'
+    languageCode = 'zh-TW'
+    languageName = '繁體中文'
+    weight = 3
+    title = '我的 Hugo 網站'
+    [languages.zh-TW.params]
+      description = '一個使用 Parsa 主題的現代 Hugo 部落格'
+
+# =============================================================================
+# Sitemap Configuration
+# =============================================================================
+
+[sitemap]
+  changefreq = 'daily'
+  filename = 'sitemap.xml'
+  priority = 0.7
+
+# =============================================================================
+# Output Formats
+# =============================================================================
+
+[outputs]
+  home = ['HTML', 'RSS', 'SITEMAP']
+
+[outputFormats]
+  [outputFormats.SITEMAP]
+    mediaType = 'application/xml'
+    baseName = 'sitemap'
+    isPlainText = true
+
+# =============================================================================
+# Taxonomies
+# =============================================================================
+
+[taxonomies]
+  category = 'categories'
+  tag = 'tags'
+
+# =============================================================================
+# Markup Configuration (for Mermaid code blocks)
+# =============================================================================
+
+[markup]
+  [markup.highlight]
+    noClasses = false
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+# =============================================================================
+# Site Parameters
+# =============================================================================
+
+[params]
+  # Site description (used for SEO meta)
+  description = 'A modern Hugo blog with Parsa theme'
+  author = 'Your Name'
+  layout = "1"
+  
+  # ========== Logo ==========
+  logo = 'images/logo.svg'
+
+  # ========== Default & OG Images ==========
+  # Used when a page has no image defined
+  default_image = 'images/default-og.jpg'
+  og_image = 'images/og-image.jpg'
+
+  # ========== Twitter ==========
+  # twitter_site = 'your_twitter_handle'
+  # twitter_creator = 'your_twitter_handle'
+
+  # ========== Google Analytics (GA4) ==========
+  # Set your GA4 Measurement ID (e.g., G-XXXXXXXXXX)
+  # google_analytics = 'G-XXXXXXXXXX'
+
+  # ========== Facebook Pixel ==========
+  # Set your Facebook Pixel ID
+  # facebook_pixel = 'XXXXXXXXXXXXXXX'
+
+  # ========== Google AdSense ==========
+  # Set your AdSense Publisher ID (e.g., ca-pub-XXXXXXXXXXXXXXXX)
+  # google_adsense = 'ca-pub-XXXXXXXXXXXXXXXX'
+
+  # ========== Google Fonts ==========
+  # Format: family=Font+Name:wght@400;700&family=Another+Font
+  # google_fonts = 'family=Inter:wght@400;500;600;700&family=Fira+Code'
+
+  # ========== Mermaid Diagrams ==========
+  # Enable globally (can also enable per-page with mermaid: true in front matter)
+  # mermaid = true
+  # mermaid_theme = 'default'  # Options: default, dark, forest, neutral
+  # mermaid_font = 'inherit'
+
+  # ========== Geo SEO ==========
+  [params.geo]
+    region = 'TW-TPE'
+    placename = 'Taipei'
+    position = '25.0330;121.5654'
+
+  # ========== Plugins (CSS/JS) ==========
+  [params.plugins]
+    # External CSS plugins
+    [[params.plugins.css]]
+      link = ''
+
+    # External JS plugins
+    [[params.plugins.js]]
+      link = ''

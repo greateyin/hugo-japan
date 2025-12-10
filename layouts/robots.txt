@@ -1,0 +1,38 @@
+{{/*
+  robots.txt template
+  Allows major search engines and AI bots
+  Includes sitemap reference
+*/}}
+User-agent: *
+Allow: /
+
+# Googlebot
+User-agent: Googlebot
+Allow: /
+
+# Bingbot
+User-agent: Bingbot
+Allow: /
+
+# GPTBot (OpenAI)
+User-agent: GPTBot
+Allow: /
+
+# CCBot (Common Crawl)
+User-agent: CCBot
+Allow: /
+
+# ClaudeBot (Anthropic)
+User-agent: ClaudeBot
+Allow: /
+
+# PerplexityBot
+User-agent: PerplexityBot
+Allow: /
+
+# Disallow common non-content paths
+Disallow: /admin/
+Disallow: /private/
+
+# Sitemap location
+Sitemap: {{ site.BaseURL }}sitemap.xml

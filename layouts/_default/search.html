@@ -1,0 +1,290 @@
+{{/*
+  Search Page Layout - Client-side search using Fuse.js
+*/}}
+{{ define "main" }}
+<section class="section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <h1 class="mb-4">{{ .Title }}</h1>
+        
+        {{/* Search Input */}}
+        <div class="search-box mb-4">
+          <div class="input-group input-group-lg">
+            <div class="input-group-prepend">
+              <span class="input-group-text bg-white border-right-0">
+                <i class="ti-search"></i>
+              </span>
+            </div>
+            <input 
+              type="text" 
+              id="search-input" 
+              class="form-control border-left-0" 
+              placeholder="{{ i18n "search_placeholder" | default "Type to search..." }}"
+              autofocus
+              autocomplete="off"
+            >
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="button" id="clear-search">
+                <i class="ti-close"></i>
+              </button>
+            </div>
+          </div>
+          <small class="text-muted mt-2 d-block">
+            {{ i18n "search_hint" | default "Search by title, content, tags, or categories" }}
+          </small>
+        </div>
+
+        {{/* Search Stats */}}
+        <div id="search-stats" class="mb-3 text-muted" style="display: none;">
+          <span id="results-count">0</span> {{ i18n "results_found" | default "results found" }}
+          <span id="search-time" class="ml-2"></span>
+        </div>
+
+        {{/* Search Results */}}
+        <div id="search-results" class="search-results">
+          {{/* Results will be inserted here by JavaScript */}}
+        </div>
+
+        {{/* No Results Message */}}
+        <div id="no-results" class="text-center py-5" style="display: none;">
+          <i class="ti-face-sad display-4 text-muted mb-3 d-block"></i>
+          <h4 class="text-muted">{{ i18n "no_results" | default "No results found" }}</h4>
+          <p class="text-muted">{{ i18n "try_different_keywords" | default "Try different keywords or check your spelling" }}</p>
+        </div>
+
+        {{/* Initial State - Show recent posts */}}
+        <div id="initial-state">
+          <h4 class="mb-3 text-muted">{{ i18n "recent_posts" | default "Recent Posts" }}</h4>
+          <div class="list-group">
+            {{ $posts := where site.RegularPages "Section" "posts" }}
+            {{ range first 10 $posts }}
+            <a href="{{ .Permalink }}" class="list-group-item list-group-item-action">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-1">{{ .Title }}</h6>
+                  {{ with .Description }}
+                  <small class="text-muted">{{ . | truncate 60 }}</small>
+                  {{ end }}
+                </div>
+                <small class="text-muted">{{ .Date.Format "2006-01-02" }}</small>
+              </div>
+            </a>
+            {{ end }}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{{/* Fuse.js for fuzzy search */}}
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+
+{{/* Search Index Data */}}
+<script>
+const searchIndex = [
+  {{ range where site.RegularPages "Section" "posts" }}
+  {
+    "title": {{ .Title | jsonify }},
+    "permalink": {{ .Permalink | jsonify }},
+    "description": {{ with .Description }}{{ . | jsonify }}{{ else }}""{{ end }},
+    "content": {{ .Plain | truncate 5000 | jsonify }},
+    "date": {{ .Date.Format "2006-01-02" | jsonify }},
+    "categories": {{ with .Params.categories }}{{ . | jsonify }}{{ else }}[]{{ end }},
+    "tags": {{ with .Params.tags }}{{ . | jsonify }}{{ else }}[]{{ end }}
+  },
+  {{ end }}
+];
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('search-input');
+  const searchResults = document.getElementById('search-results');
+  const searchStats = document.getElementById('search-stats');
+  const resultsCount = document.getElementById('results-count');
+  const searchTime = document.getElementById('search-time');
+  const noResults = document.getElementById('no-results');
+  const initialState = document.getElementById('initial-state');
+  const clearBtn = document.getElementById('clear-search');
+
+  // Fuse.js options
+  const fuseOptions = {
+    keys: [
+      { name: 'title', weight: 0.4 },
+      { name: 'description', weight: 0.3 },
+      { name: 'content', weight: 0.2 },
+      { name: 'tags', weight: 0.05 },
+      { name: 'categories', weight: 0.05 }
+    ],
+    threshold: 0.3,
+    ignoreLocation: true,
+    minMatchCharLength: 2,
+    includeScore: true,
+    includeMatches: true
+  };
+
+  const fuse = new Fuse(searchIndex, fuseOptions);
+
+  // Debounce function
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  // Highlight matching text
+  function highlightMatches(text, matches, key) {
+    if (!matches) return text;
+    const match = matches.find(m => m.key === key);
+    if (!match) return text;
+    
+    let result = text;
+    const indices = match.indices.sort((a, b) => b[0] - a[0]);
+    
+    for (const [start, end] of indices) {
+      if (start < result.length) {
+        const before = result.slice(0, start);
+        const matched = result.slice(start, end + 1);
+        const after = result.slice(end + 1);
+        result = before + '<mark>' + matched + '</mark>' + after;
+      }
+    }
+    
+    return result;
+  }
+
+  // Render search results
+  function renderResults(results) {
+    if (results.length === 0) {
+      searchResults.innerHTML = '';
+      noResults.style.display = 'block';
+      searchStats.style.display = 'none';
+      return;
+    }
+
+    noResults.style.display = 'none';
+    searchStats.style.display = 'block';
+    resultsCount.textContent = results.length;
+
+    const html = results.map(result => {
+      const item = result.item;
+      const title = highlightMatches(item.title, result.matches, 'title');
+      const description = item.description 
+        ? highlightMatches(item.description, result.matches, 'description')
+        : '';
+      
+      const tags = item.tags.length > 0 
+        ? item.tags.map(t => `<span class="badge badge-light mr-1">${t}</span>`).join('')
+        : '';
+      
+      const categories = item.categories.length > 0
+        ? item.categories.map(c => `<span class="badge badge-secondary mr-1">${c}</span>`).join('')
+        : '';
+
+      return `
+        <div class="search-result-item card mb-3">
+          <div class="card-body">
+            <h5 class="card-title mb-1">
+              <a href="${item.permalink}">${title}</a>
+            </h5>
+            ${description ? `<p class="card-text text-muted small mb-2">${description}</p>` : ''}
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                ${categories}
+                ${tags}
+              </div>
+              <small class="text-muted">${item.date}</small>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    searchResults.innerHTML = html;
+  }
+
+  // Search function
+  const performSearch = debounce(function(query) {
+    if (query.length < 2) {
+      searchResults.innerHTML = '';
+      searchStats.style.display = 'none';
+      noResults.style.display = 'none';
+      initialState.style.display = 'block';
+      return;
+    }
+
+    initialState.style.display = 'none';
+    
+    const startTime = performance.now();
+    const results = fuse.search(query);
+    const endTime = performance.now();
+    
+    searchTime.textContent = `(${(endTime - startTime).toFixed(1)}ms)`;
+    
+    renderResults(results);
+  }, 200);
+
+  // Event listeners
+  searchInput.addEventListener('input', function(e) {
+    performSearch(e.target.value.trim());
+  });
+
+  clearBtn.addEventListener('click', function() {
+    searchInput.value = '';
+    searchResults.innerHTML = '';
+    searchStats.style.display = 'none';
+    noResults.style.display = 'none';
+    initialState.style.display = 'block';
+    searchInput.focus();
+  });
+
+  // Check URL for search query
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryParam = urlParams.get('q');
+  if (queryParam) {
+    searchInput.value = queryParam;
+    performSearch(queryParam);
+  }
+});
+</script>
+
+<style>
+.search-box .form-control:focus {
+  box-shadow: none;
+  border-color: #ced4da;
+}
+.search-box .input-group-text {
+  border-color: #ced4da;
+}
+.search-result-item {
+  transition: box-shadow 0.2s ease;
+}
+.search-result-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.search-result-item .card-title a {
+  color: #333;
+  text-decoration: none;
+}
+.search-result-item .card-title a:hover {
+  color: #007bff;
+}
+.search-result-item mark {
+  background-color: #fff3cd;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+#clear-search {
+  border-color: #ced4da;
+}
+</style>
+{{ end }}

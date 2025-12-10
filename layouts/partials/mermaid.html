@@ -1,0 +1,22 @@
+{{/*
+  Mermaid Diagram Support
+  Enable by setting mermaid: true in front matter or site params
+*/}}
+
+<!-- Mermaid JS for diagram rendering -->
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: '{{ site.Params.mermaid_theme | default "default" }}',
+    securityLevel: 'loose',
+    fontFamily: '{{ site.Params.mermaid_font | default "inherit" }}'
+  });
+</script>
+<style>
+  /* Mermaid diagram container styles */
+  .mermaid {
+    text-align: center;
+    margin: 1.5rem 0;
+  }
+</style>

@@ -1,0 +1,20 @@
+{{- /* Image partial - renders an image with optional attributes */ -}}
+{{- $src := .Src -}}
+{{- $alt := .Alt | default "" -}}
+{{- $class := .Class | default "" -}}
+{{- $width := .Width | default "" -}}
+{{- $height := .Height | default "" -}}
+
+{{- if $src -}}
+<img 
+  src="{{ $src | absURL }}" 
+  alt="{{ $alt }}"
+  {{- if $class }} class="{{ $class }}"{{ end -}}
+  {{- if $width }} width="{{ $width }}"{{ end -}}
+  {{- if $height }} height="{{ $height }}"{{ end -}}
+  loading="lazy"
+  onerror="this.style.display='none';this.nextElementSibling.style.display='inline';"
+><span style="display:none;font-weight:bold;font-size:1.2rem;">{{ site.Title }}</span>
+{{- else -}}
+<span style="font-weight:bold;font-size:1.2rem;">{{ site.Title }}</span>
+{{- end -}}

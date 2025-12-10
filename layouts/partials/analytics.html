@@ -1,0 +1,52 @@
+{{/*
+  Analytics & Tracking Partial
+  - Google Analytics (GA4)
+  - Facebook Pixel
+  - Google AdSense
+  Only outputs JavaScript if the corresponding parameter is set and non-empty.
+*/}}
+
+{{/* ========== Google Analytics (GA4) ========== */}}
+{{ with site.Params.google_analytics }}
+{{ if ne . "" }}
+<!-- Google Analytics (GA4) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ . }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{{ . }}');
+</script>
+{{ end }}
+{{ end }}
+
+{{/* ========== Facebook Pixel ========== */}}
+{{ with site.Params.facebook_pixel }}
+{{ if ne . "" }}
+<!-- Facebook Pixel -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '{{ . }}');
+  fbq('track', 'PageView');
+</script>
+<noscript>
+  <img height="1" width="1" style="display:none"
+       src="https://www.facebook.com/tr?id={{ . }}&ev=PageView&noscript=1"/>
+</noscript>
+{{ end }}
+{{ end }}
+
+{{/* ========== Google AdSense ========== */}}
+{{ with site.Params.google_adsense }}
+{{ if ne . "" }}
+<!-- Google AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ . }}" crossorigin="anonymous"></script>
+{{ end }}
+{{ end }}

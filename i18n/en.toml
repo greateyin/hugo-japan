@@ -1,0 +1,86 @@
+# English translations
+
+[home]
+other = "Home"
+
+[about]
+other = "About"
+
+[contact]
+other = "Contact"
+
+[read_more]
+other = "Read More"
+
+[categories]
+other = "Categories"
+
+[tags]
+other = "Tags"
+
+[search]
+other = "Search"
+
+[search_placeholder]
+other = "Search..."
+
+[no_results]
+other = "No results found"
+
+[prev]
+other = "Previous"
+
+[next]
+other = "Next"
+
+[share]
+other = "Share"
+
+[published_on]
+other = "Published on"
+
+[updated_on]
+other = "Updated on"
+
+[author]
+other = "Author"
+
+[related_posts]
+other = "Related Posts"
+
+[table_of_contents]
+other = "Table of Contents"
+
+[page_not_found]
+other = "Page Not Found"
+
+[back_to_home]
+other = "Back to Home"
+
+[minute_read]
+one = "min read"
+other = "min read"
+
+[posts]
+other = "Posts"
+
+[all_posts]
+other = "All Posts"
+
+[recent_posts]
+other = "Recent Posts"
+
+[archives]
+other = "Archives"
+
+[search_hint]
+other = "Search by title, content, tags, or categories"
+
+[results_found]
+other = "results found"
+
+[try_different_keywords]
+other = "Try different keywords or check your spelling"
+
+[no_posts_found]
+other = "No posts found."

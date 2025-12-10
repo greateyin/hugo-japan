@@ -1,0 +1,86 @@
+# 繁體中文翻譯
+
+[home]
+other = "首頁"
+
+[about]
+other = "關於"
+
+[contact]
+other = "聯絡"
+
+[read_more]
+other = "閱讀更多"
+
+[categories]
+other = "分類"
+
+[tags]
+other = "標籤"
+
+[search]
+other = "搜尋"
+
+[search_placeholder]
+other = "搜尋..."
+
+[no_results]
+other = "未找到結果"
+
+[prev]
+other = "上一頁"
+
+[next]
+other = "下一頁"
+
+[share]
+other = "分享"
+
+[published_on]
+other = "發佈於"
+
+[updated_on]
+other = "更新於"
+
+[author]
+other = "作者"
+
+[related_posts]
+other = "相關文章"
+
+[table_of_contents]
+other = "目錄"
+
+[page_not_found]
+other = "頁面未找到"
+
+[back_to_home]
+other = "返回首頁"
+
+[minute_read]
+one = "分鐘閱讀"
+other = "分鐘閱讀"
+
+[posts]
+other = "文章"
+
+[all_posts]
+other = "所有文章"
+
+[recent_posts]
+other = "最新文章"
+
+[archives]
+other = "文章列表"
+
+[search_hint]
+other = "按標題、內容、標籤或分類搜尋"
+
+[results_found]
+other = "個結果"
+
+[try_different_keywords]
+other = "嘗試其他關鍵詞或檢查拼寫"
+
+[no_posts_found]
+other = "暫無文章"
