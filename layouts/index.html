@@ -77,6 +77,48 @@
         <div class="ti-hero-stat-value">{{ len $tags }}</div>
         <div class="ti-hero-stat-label">{{ i18n "tags" | default "Tags" }}</div>
       </div>
+  </div>
+</section>
+{{ end }}
+
+{{/* About Section */}}
+{{ if site.Params.about_section.enable }}
+<section class="ti-about" id="about">
+  <div class="ti-container">
+    <div class="ti-about-wrapper">
+      
+      {{/* About Image */}}
+      <div class="ti-about-image">
+        {{ with site.Params.about_section.image }}
+        <img src="{{ . | relURL }}" alt="{{ site.Params.about_section.title }}" loading="lazy">
+        {{ end }}
+        <div class="ti-about-decoration"></div>
+      </div>
+
+      {{/* About Content */}}
+      <div class="ti-about-content">
+        {{ with site.Params.about_section.subtitle }}
+        <span class="ti-about-badge">{{ . }}</span>
+        {{ end }}
+        
+        <h2 class="ti-section-title">{{ site.Params.about_section.title }}</h2>
+        
+        {{ with site.Params.about_section.content }}
+        <p class="ti-about-text">{{ . | markdownify }}</p>
+        {{ end }}
+        
+        {{ with site.Params.about_section.button_text }}
+        <a href="{{ site.Params.about_section.button_link | default "#" }}" class="ti-btn ti-btn-primary ti-btn-lg">
+          {{ . }}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+        {{ end }}
+      </div>
+
     </div>
   </div>
 </section>

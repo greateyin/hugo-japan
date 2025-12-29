@@ -26,6 +26,15 @@ enableRobotsTXT = true
     title = 'Tech Insights'
     [languages.en.params]
       description = 'Explore the latest tech trends, development tips, and industry insights. A professional tech blog for developers and tech enthusiasts.'
+      
+      [languages.en.params.about_section]
+        enable = true
+        title = "About Tech Insights"
+        subtitle = "Empowering developers and tech enthusiasts worldwide"
+        content = "Tech Insights is a professional technology blog dedicated to delivering in-depth analysis, practical tutorials, and industry insights. Our mission is to help developers stay ahead of the curve by exploring cutting-edge technologies including AI, web development, cloud computing, and cybersecurity. We believe in making complex technical concepts accessible and actionable for our global community."
+        image = "images/about-tech.jpg"
+        button_text = "Learn More"
+        button_link = "/about/"
 
   [languages.zh-TW]
     contentDir = 'content/zh-TW'
@@ -35,6 +44,15 @@ enableRobotsTXT = true
     title = 'Tech Insights 科技洞察'
     [languages.zh-TW.params]
       description = '探索最新科技趨勢、程式開發技巧和產業洞察。專業的科技部落格，為開發者和科技愛好者提供深度內容。'
+      
+      [languages.zh-TW.params.about_section]
+        enable = true
+        title = "關於 Tech Insights"
+        subtitle = "賦能全球開發者與科技愛好者"
+        content = "Tech Insights 是一個專業的科技部落格，致力於提供深入的技術分析、實用教學和產業洞察。我們的使命是幫助開發者掌握最新科技趨勢，包括人工智慧、網頁開發、雲端運算和資訊安全等前沿技術。我們相信，將複雜的技術概念轉化為可理解且可實踐的內容，能為全球開發者社群帶來真正的價值。"
+        image = "images/about-tech.jpg"
+        button_text = "了解更多"
+        button_link = "/zh-tw/about/"
 
   [languages.zh-CN]
     contentDir = 'content/zh-CN'
@@ -44,6 +62,15 @@ enableRobotsTXT = true
     title = 'Tech Insights 科技洞察'
     [languages.zh-CN.params]
       description = '探索最新科技趋势、程序开发技巧和产业洞察。专业的科技博客，为开发者和科技爱好者提供深度内容。'
+      
+      [languages.zh-CN.params.about_section]
+        enable = true
+        title = "关于 Tech Insights"
+        subtitle = "赋能全球开发者与科技爱好者"
+        content = "Tech Insights 是一个专业的科技博客，致力于提供深入的技术分析、实用教程和产业洞察。我们的使命是帮助开发者掌握最新科技趋势，包括人工智能、网页开发、云端计算和信息安全等前沿技术。我们相信，将复杂的技术概念转化为可理解且可实践的内容，能为全球开发者社群带来真正的价值。"
+        image = "images/about-tech.jpg"
+        button_text = "了解更多"
+        button_link = "/zh-cn/about/"
 
 # =============================================================================
 # Sitemap Configuration
@@ -203,30 +230,27 @@ enableRobotsTXT = true
 
   [[params.footer.about]]
     label = "About Us"
-    url = "#about"
-  [[params.footer.about]]
-    label = "Authors"
-    url = "#authors"
+    url = "/about/"
   [[params.footer.about]]
     label = "Contact"
-    url = "#contact"
+    url = "mailto:hello@techinsights.com"
 
   [[params.footer.resources]]
     label = "All Articles"
-    url = "#articles"
+    url = "/posts/"
   [[params.footer.resources]]
     label = "Categories"
-    url = "#categories"
+    url = "/categories/"
   [[params.footer.resources]]
     label = "Tags"
-    url = "#tags"
+    url = "/tags/"
 
   [[params.footer.legal]]
     label = "Privacy Policy"
-    url = "#privacy"
+    url = "/about/"
   [[params.footer.legal]]
     label = "Terms of Use"
-    url = "#terms"
+    url = "/about/"
   [[params.footer.legal]]
     label = "RSS Feed"
     url = "/index.xml"

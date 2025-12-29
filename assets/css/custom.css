@@ -860,10 +860,86 @@ body.tech-insights {
 }
 
 .ti-footer-bottom {
-  padding-top: 2rem;
   border-top: 2px solid hsl(var(--ti-border));
   text-align: center;
   color: hsl(var(--ti-foreground) / 0.6);
+}
+
+/* =============================================================================
+   About Section
+   ============================================================================= */
+.ti-about {
+  padding: 5rem 0;
+  background: linear-gradient(to bottom, hsl(var(--ti-background)), hsl(var(--ti-muted) / 0.3));
+  position: relative;
+  overflow: hidden;
+}
+
+.ti-about-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .ti-about-wrapper {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+}
+
+.ti-about-image {
+  position: relative;
+}
+
+.ti-about-image img {
+  width: 100%;
+  border-radius: var(--ti-radius-lg);
+  box-shadow: var(--ti-shadow-watercolor);
+  transition: var(--ti-transition);
+}
+
+.ti-about-image:hover img {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px hsl(340 60% 70% / 0.3), 0 0 80px hsl(200 60% 80% / 0.2);
+}
+
+.ti-about-decoration {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 200px;
+  height: 200px;
+  background: hsl(var(--ti-secondary) / 0.3);
+  border-radius: 50%;
+  filter: blur(60px);
+  z-index: -1;
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.ti-about-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ti-about-badge {
+  display: inline-block;
+  align-self: flex-start;
+  background: hsl(var(--ti-primary) / 0.1);
+  color: hsl(var(--ti-primary));
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 2px solid hsl(var(--ti-primary) / 0.3);
+}
+
+.ti-about-text {
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: hsl(var(--ti-foreground) / 0.8);
 }
 
 /* =============================================================================
