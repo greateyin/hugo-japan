@@ -1,0 +1,309 @@
+<div id="pigeon-canvas-container"
+    style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; overflow: hidden; pointer-events: none;">
+</div>
+<div id="pigeon-noise"
+    style="position: fixed; top: -50%; left: -50%; right: -50%; bottom: -50%; width: 200%; height: 200%; background: transparent url('https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-clean-blog/5.0.10/img/home-bg.jpg') repeat 0 0; background-image: url('https://i.imgur.com/N0STPcn.png'); animation: bg-noise .2s infinite; opacity: .4; visibility: visible; z-index: -1; pointer-events: none;">
+</div>
+
+<style>
+    @keyframes bg-noise {
+        0% {
+            transform: translate3d(0, 0, 0);
+        }
+
+        10% {
+            transform: translate3d(-5%, -5%, 0);
+        }
+
+        20% {
+            transform: translate3d(-10%, 5%, 0);
+        }
+
+        30% {
+            transform: translate3d(5%, -10%, 0);
+        }
+
+        40% {
+            transform: translate3d(-5%, 15%, 0);
+        }
+
+        50% {
+            transform: translate3d(-10%, 5%, 0);
+        }
+
+        60% {
+            transform: translate3d(15%, 0, 0);
+        }
+
+        70% {
+            transform: translate3d(0, 10%, 0);
+        }
+
+        80% {
+            transform: translate3d(-15%, 0, 0);
+        }
+
+        90% {
+            transform: translate3d(10%, 5%, 0);
+        }
+
+        100% {
+            transform: translate3d(5%, 0, 0);
+        }
+    }
+</style>
+
+<script type="module">
+    import * as THREE from "https://esm.sh/three";
+    import { OrbitControls } from "https://esm.sh/three/examples/jsm/controls/OrbitControls.js";
+    import gsap from "https://esm.sh/gsap";
+
+    // Configuration
+    const Theme = {
+        primary: 0xd7dddd,
+        secondary: 0x0000FF,
+        danger: 0xFF0000,
+        darker: 0x101010,
+        background: "#768ca8"
+    };
+
+    let scene, camera, renderer, controls;
+    const _group = new THREE.Group();
+    const container = document.getElementById('pigeon-canvas-container');
+
+    // --- Class Definition MUST be before usage ---
+    class CreatePigeon {
+        constructor() {
+            this.mesh = new THREE.Group();
+            this.wings = [];
+
+            const bodyColor = 0xaaaaaa; // Grey pigeon
+            const headColor = 0x888888; // Darker head
+            const beakColor = 0xffa500; // Orange
+            const legColor = 0xffa500;
+
+            const matBody = new THREE.MeshPhongMaterial({ color: bodyColor, flatShading: true });
+            const matHead = new THREE.MeshPhongMaterial({ color: headColor, flatShading: true });
+            const matBeak = new THREE.MeshPhongMaterial({ color: beakColor, flatShading: true });
+            const matWing = new THREE.MeshPhongMaterial({ color: 0xcccccc, side: THREE.DoubleSide, flatShading: true });
+
+            // Organic Body (Scaled Sphere)
+            const bodyGeo = new THREE.SphereGeometry(0.4, 8, 8);
+            bodyGeo.scale(1, 0.5, 0.6);
+            const body = new THREE.Mesh(bodyGeo, matBody);
+            body.castShadow = true;
+            this.mesh.add(body);
+
+            // Neck & Head
+            const headGroup = new THREE.Group();
+            headGroup.position.set(0.3, 0.25, 0);
+
+            const headGeo = new THREE.SphereGeometry(0.2, 8, 8);
+            const head = new THREE.Mesh(headGeo, matHead);
+            headGroup.add(head);
+
+            // Beak
+            const beakGeo = new THREE.ConeGeometry(0.05, 0.2, 4);
+            beakGeo.rotateZ(-Math.PI / 2); // Point forward
+            const beak = new THREE.Mesh(beakGeo, matBeak);
+            beak.position.set(0.18, 0, 0);
+            headGroup.add(beak);
+
+            this.mesh.add(headGroup);
+
+            // Tail
+            const tailGeo = new THREE.ConeGeometry(0.2, 0.6, 4);
+            tailGeo.rotateZ(Math.PI / 2);
+            tailGeo.scale(1, 1, 0.2); // Flatten
+            const tail = new THREE.Mesh(tailGeo, matBody);
+            tail.position.set(-0.45, 0, 0);
+            this.mesh.add(tail);
+
+            // Wings (Custom Shape)
+            const wingShape = new THREE.Shape();
+            wingShape.moveTo(0, 0);
+            wingShape.quadraticCurveTo(0.2, 0.5, 0.6, 0.6); // Front edge
+            wingShape.quadraticCurveTo(0.8, 0.2, 0.5, -0.2); // Tip back
+            wingShape.lineTo(0.1, -0.1);
+
+            const wingGeo = new THREE.ShapeGeometry(wingShape);
+
+            // Left Wing
+            const lWing = new THREE.Mesh(wingGeo, matWing);
+            lWing.position.set(0, 0.1, 0.2);
+            lWing.rotation.x = -Math.PI / 2;
+            lWing.castShadow = true;
+
+            // Pivot for flapping
+            const lPivot = new THREE.Object3D();
+            lPivot.position.set(0.1, 0.1, 0.2);
+            lPivot.add(lWing);
+            lWing.position.set(0, 0, 0); // Reset local pos relative to pivot
+            this.mesh.add(lPivot);
+            this.wings.push(lPivot);
+
+            // Right Wing
+            const rWing = new THREE.Mesh(wingGeo, matWing);
+            rWing.position.set(0, 0.1, -0.2);
+            rWing.rotation.x = Math.PI / 2;
+            rWing.rotation.y = Math.PI; // Mirror
+            rWing.castShadow = true;
+
+            const rPivot = new THREE.Object3D();
+            rPivot.position.set(0.1, 0.1, -0.2);
+            rPivot.add(rWing);
+            rWing.position.set(0, 0, 0);
+            this.mesh.add(rPivot);
+            this.wings.push(rPivot);
+
+            // Scale
+            this.mesh.scale.set(0.8, 0.8, 0.8);
+
+            // Random starting flap phase
+            this.flapOffset = Math.random() * 100;
+        }
+
+        flap(time) {
+            const speed = 10;
+            const angle = Math.sin(time * speed + this.flapOffset) * 0.4;
+
+            // Flap wings around Z axis (relative to pivot)
+            // Left Wing
+            this.wings[0].rotation.z = angle;
+            this.wings[0].rotation.x = -0.2 + angle * 0.5; // Add some complexity
+
+            // Right Wing
+            this.wings[1].rotation.z = -angle;
+            this.wings[1].rotation.x = 0.2 - angle * 0.5;
+        }
+    }
+
+    // Helper function
+    function isTooClose(newObj, others, minDistance = 2.5) {
+        const newPos = newObj.position;
+        for (let existing of others) {
+            if (existing.mesh.position.distanceTo(newPos) < minDistance) return true;
+        }
+        return false;
+    }
+
+    const pigeons = []; // Store instances
+
+    function init() {
+        createWorld();
+        createLights();
+        createPrimitives();
+        animate();
+    }
+
+    function createWorld() {
+        const _width = window.innerWidth;
+        const _height = window.innerHeight;
+
+        scene = new THREE.Scene();
+        scene.fog = new THREE.Fog(Theme.background, 5, 25);
+        scene.background = new THREE.Color(Theme.background);
+
+        camera = new THREE.PerspectiveCamera(35, _width / _height, 1, 1000);
+        camera.position.set(0, 0, 12);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(_width, _height);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+        container.appendChild(renderer.domElement);
+
+        controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableZoom = false;
+        controls.enablePan = false;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 1.0;
+        controls.update();
+
+        window.addEventListener('resize', onWindowResize, false);
+    }
+
+    function onWindowResize() {
+        const _width = window.innerWidth;
+        const _height = window.innerHeight;
+        renderer.setSize(_width, _height);
+        camera.aspect = _width / _height;
+        camera.updateProjectionMatrix();
+    }
+
+    function createLights() {
+        const hemiLight = new THREE.HemisphereLight(0xffffff, Theme.darker, 1.2);
+        scene.add(hemiLight);
+
+        const dirLight = new THREE.DirectionalLight(0xFFFFFF, 1);
+        dirLight.position.set(10, 20, 20);
+        dirLight.castShadow = true;
+        scene.add(dirLight);
+    }
+
+    function createPrimitives() {
+        const placedPigeons = [];
+        const spread = 5;
+
+        for (let i = 0; i < 15; i++) {
+            try {
+                const pigeon = new CreatePigeon();
+                const s = 0.5 + Math.random() * 0.5;
+                pigeon.mesh.scale.set(s, s, s);
+
+                let tries = 0;
+                do {
+                    pigeon.mesh.position.x = (Math.random() - 0.5) * spread * 2;
+                    pigeon.mesh.position.y = (Math.random() - 0.5) * spread * 2;
+                    pigeon.mesh.position.z = (Math.random() - 0.5) * spread * 2;
+                    tries++;
+                } while (isTooClose(pigeon.mesh, placedPigeons) && tries < 50);
+
+                pigeon.mesh.rotation.x = Math.random() * 2 * Math.PI;
+                pigeon.mesh.rotation.y = Math.random() * 2 * Math.PI;
+                pigeon.mesh.rotation.z = Math.random() * 2 * Math.PI;
+
+                // Animate Rotation
+                gsap.to(pigeon.mesh.rotation, {
+                    duration: 6 + Math.random() * 6,
+                    x: "+=" + (Math.random() - 0.5) * 1,
+                    y: "+=" + (Math.random() - 0.5) * 1,
+                    z: "+=" + (Math.random() - 0.5) * 1,
+                    yoyo: true,
+                    repeat: -1,
+                    ease: "sine.inOut",
+                    delay: Math.random() * 2
+                });
+
+                // Animate Position (Floating)
+                gsap.to(pigeon.mesh.position, {
+                    duration: 4 + Math.random() * 4,
+                    y: "+=" + (Math.random() * 0.5),
+                    yoyo: true,
+                    repeat: -1,
+                    ease: "sine.inOut",
+                    delay: Math.random() * 2
+                });
+
+                _group.add(pigeon.mesh);
+                placedPigeons.push(pigeon.mesh);
+            } catch (e) {
+                console.error("Error creating pigeon:", e);
+            }
+        }
+
+        scene.add(_group);
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        _group.rotation.x += 0.001;
+        _group.rotation.y += 0.002;
+        controls.update();
+        renderer.render(scene, camera);
+    }
+
+    // Start execution
+    init();
+</script>

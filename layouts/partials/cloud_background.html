@@ -1,0 +1,221 @@
+<style>
+  body {
+    background: transparent !important;
+  }
+</style>
+<div id="cloud-container"
+  style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; overflow: hidden; pointer-events: none;">
+</div>
+
+<script type="module">
+  import * as THREE from "https://esm.sh/three";
+  import * as BufferGeometryUtils from "https://esm.sh/three/examples/jsm/utils/BufferGeometryUtils.js";
+
+  // Configuration
+  const CLOUD_COUNT = 8000;
+  const TEXTURE_URL = "https://mrdoob.com/lab/javascript/webgl/clouds/cloud10.png";
+
+  // DOM Elements
+  const container = document.querySelector("#cloud-container");
+
+  // State
+  let camera, scene, renderer;
+  let mesh, material;
+  let start_time = Date.now();
+  let windowHalfX = window.innerWidth / 2;
+  let windowHalfY = window.innerHeight / 2;
+  let mouseX = 0, mouseY = 0;
+
+  // Day/Night Cycle Configuration
+  const CYCLE = {
+    // Colors in Hex
+    day: {
+      skyTop: "#1e4877",
+      skyBottom: "#4584b4",
+      fog: 0x4584b4
+    },
+    night: {
+      skyTop: "#0d1a2b", // Dark blue/black
+      skyBottom: "#1a2e46", // Slightly lighter night
+      fog: 0x1a2e46
+    }
+  };
+
+  init();
+  animate();
+
+  function getCycleState() {
+    const hour = new Date().getHours();
+    // Simple logic: Day 6:00 - 18:00, Night otherwise
+    // Implementation could be smooth interpolation, but for now strict switch or checking ranges
+    const isDay = hour >= 6 && hour < 18;
+
+    // For smoother transitions, we could check minutes, but let's stick to the request "day to night effect"
+    // To make it dynamic per user time, we set the target colors.
+
+    return isDay ? CYCLE.day : CYCLE.night;
+  }
+
+  function init() {
+    // Scene Setup
+    scene = new THREE.Scene();
+
+    camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 3000);
+    camera.position.z = 6000;
+
+    // Renderer Setup
+    renderer = new THREE.WebGLRenderer({
+      antialias: false,
+      alpha: true // Important for CSS background gradient to show through
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    container.appendChild(renderer.domElement);
+
+    // Initial Appearance Setup
+    updateAppearance();
+
+    // Texture Loading
+    new THREE.TextureLoader().load(TEXTURE_URL, (texture) => {
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.magFilter = THREE.LinearMipMapLinearFilter;
+      texture.minFilter = THREE.LinearMipMapLinearFilter;
+
+      // Cloud Material using Custom Shader
+      const cloudShader = {
+        vertexShader: `
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+          }
+        `,
+        fragmentShader: `
+          uniform sampler2D map;
+          uniform vec3 fogColor;
+          uniform float fogNear;
+          uniform float fogFar;
+          varying vec2 vUv;
+
+          void main() {
+            float depth = gl_FragCoord.z / gl_FragCoord.w;
+            float fogFactor = smoothstep( fogNear, fogFar, depth );
+
+            gl_FragColor = texture2D( map, vUv );
+            gl_FragColor.w *= pow( gl_FragCoord.z, 20.0 );
+            gl_FragColor = mix( gl_FragColor, vec4( fogColor , gl_FragColor.w ), fogFactor );
+          }
+        `
+      };
+
+      // Get current fog color based on cycle
+      const currentState = getCycleState();
+      const fogColorValue = new THREE.Color(currentState.fog);
+
+      material = new THREE.ShaderMaterial({
+        uniforms: {
+          map: { type: "t", value: texture },
+          fogColor: { type: "c", value: fogColorValue },
+          fogNear: { type: "f", value: -100 }, // Matches fog.near
+          fogFar: { type: "f", value: 3000 }   // Matches fog.far
+        },
+        vertexShader: cloudShader.vertexShader,
+        fragmentShader: cloudShader.fragmentShader,
+        depthWrite: false,
+        depthTest: false,
+        transparent: true
+      });
+
+      // Geometry Construction
+      const planeGeo = new THREE.PlaneGeometry(64, 64);
+      const geometries = [];
+      const planeObj = new THREE.Object3D();
+
+      for (let i = 0; i < CLOUD_COUNT; i++) {
+        planeObj.position.x = Math.random() * 1000 - 500;
+        planeObj.position.y = -Math.random() * Math.random() * 200 - 15;
+        planeObj.position.z = i;
+        planeObj.rotation.z = Math.random() * Math.PI;
+        planeObj.scale.x = planeObj.scale.y = Math.random() * Math.random() * 1.5 + 0.5;
+        planeObj.updateMatrix();
+
+        const cloned = planeGeo.clone();
+        cloned.applyMatrix4(planeObj.matrix);
+        geometries.push(cloned);
+      }
+
+      // Merge and Add to Scene
+      const mergedGeo = BufferGeometryUtils.mergeGeometries(geometries);
+      const mesh1 = new THREE.Mesh(mergedGeo, material);
+      mesh1.renderOrder = 2;
+
+      const mesh2 = mesh1.clone();
+      mesh2.position.z = -8000;
+      mesh2.renderOrder = 1;
+
+      scene.add(mesh1);
+      scene.add(mesh2);
+    });
+
+    // Event Listeners
+    document.addEventListener("mousemove", onDocumentMouseMove, false);
+    window.addEventListener("resize", onWindowResize, false);
+  }
+
+  function updateAppearance() {
+    const currentState = getCycleState();
+
+    // Update CSS Gradient Background
+    // We create a canvas pattern or just simple CSS gradient on the container
+    // The original code used a canvas pattern for background, simpler to use CSS
+    container.style.background = `linear-gradient(to bottom, ${currentState.skyTop} 0%, ${currentState.skyBottom} 100%)`;
+
+    // Update Fog
+    // Note: Fog in the scene is for standard materials, but our ShaderMaterial handles fog manually via uniforms.
+    // However, we should still update scene fog if we add other objects.
+    const fog = new THREE.Fog(currentState.fog, -100, 3000);
+    scene.fog = fog;
+
+    // If material is ready, update its uniforms
+    if (material) {
+      material.uniforms.fogColor.value.setHex(currentState.fog);
+    }
+  }
+
+  function onDocumentMouseMove(event) {
+    mouseX = (event.clientX - windowHalfX) * 0.25;
+    mouseY = (event.clientY - windowHalfY) * 0.15;
+  }
+
+  function onWindowResize() {
+    windowHalfX = window.innerWidth / 2;
+    windowHalfY = window.innerHeight / 2;
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    const position = ((Date.now() - start_time) * 0.03) % 8000;
+
+    camera.position.x += (mouseX - camera.position.x) * 0.01;
+    camera.position.y += (-mouseY - camera.position.y) * 0.01;
+    camera.position.z = -position + 8000;
+
+    renderer.render(scene, camera);
+
+    // Optional: Periodically check for time change to update colors (e.g. every minute)
+    // For now, let's keep it static on load or add a check if needed. 
+    // Since requestAnimationFrame is high frequency, we shouldn't do Date logic every frame if expensive.
+  }
+
+  // Update appearance initially
+  updateAppearance();
+
+  // Update appearance check every minute
+  setInterval(updateAppearance, 60000);
+
+</script>

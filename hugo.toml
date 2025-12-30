@@ -228,7 +228,7 @@ enableRobotsTXT = true
 
   # ========== Newsletter Section ==========
   [params.newsletter]
-    enable = true
+    enable = false
     title = "Subscribe to Our Newsletter"
     subtitle = "Get the latest tech articles, trend analysis, and exclusive content every week - completely free!"
     placeholder = "Enter your email"
