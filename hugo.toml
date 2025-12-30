@@ -2,7 +2,7 @@
 # Hugo Site Configuration - Tech Insights 科技洞察
 # =============================================================================
 
-baseURL = 'https://fluxio.dev/'
+baseURL = 'https://hugo-demo-busi.most.tw/'
 title = 'fluxio'
 theme = 'parsa'
 
