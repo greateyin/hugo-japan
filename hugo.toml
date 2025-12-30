@@ -141,30 +141,42 @@ enableRobotsTXT = true
   default_image = 'images/default-og.jpg'
   og_image = 'images/og-image.jpg'
 
-  # ========== Hero Section ==========
+  # ========== Hero Carousel Section ==========
   [params.hero]
     enable = true
-    badge = "Latest Tech Trends & Deep Analysis"
-    title_prefix = "Explore the"
-    title_highlight = "Infinite Possibilities"
-    subtitle = "In-depth analysis of AI, Web Development, Cloud Technologies and more. Professional insights for developers and tech enthusiasts."
-    primary_button = "Explore Articles"
-    secondary_button = "About Us"
-    background_image = "images/hero-tech.jpg"
+    # Auto-advance interval in milliseconds (5000 = 5 seconds, 0 = disabled)
+    autoplay_interval = 6000
 
-  # ========== Hero Stats ==========
-  [[params.hero.stats]]
-    value = "200+"
-    label = "Articles"
-  [[params.hero.stats]]
-    value = "50K+"
-    label = "Monthly Visitors"
-  [[params.hero.stats]]
-    value = "10K+"
-    label = "Subscribers"
-  [[params.hero.stats]]
-    value = "30+"
-    label = "Tech Topics"
+  # Hero Carousel Slides
+  [[params.hero.slides]]
+    image = "images/hero-tech.jpg"
+    badge = "Latest Tech Trends"
+    title = "Explore the <span class='ti-hero-title-highlight'>Infinite Possibilities</span>"
+    subtitle = "In-depth analysis of AI, Web Development, Cloud Technologies and more. Professional insights for developers and tech enthusiasts."
+    primary_button_text = "Explore Articles"
+    primary_button_link = "#articles"
+    secondary_button_text = "Learn More"
+    secondary_button_link = "#about"
+
+  [[params.hero.slides]]
+    image = "images/hero-ai.jpg"
+    badge = "AI & Machine Learning"
+    title = "Master <span class='ti-hero-title-highlight'>Artificial Intelligence</span>"
+    subtitle = "From deep learning fundamentals to production deployment. Comprehensive AI tutorials and case studies."
+    primary_button_text = "View AI Articles"
+    primary_button_link = "/categories/ai/"
+    secondary_button_text = "Get Started"
+    secondary_button_link = "#newsletter"
+
+  [[params.hero.slides]]
+    image = "images/hero-dev.jpg"
+    badge = "Web Development"
+    title = "Build <span class='ti-hero-title-highlight'>Modern Web Apps</span>"
+    subtitle = "React, Vue, Next.js and more. Learn the latest frameworks and best practices for web development."
+    primary_button_text = "View Dev Articles"
+    primary_button_link = "/categories/development/"
+    secondary_button_text = "Browse Topics"
+    secondary_button_link = "#categories"
 
   # ========== Categories Section ==========
   [params.categories_section]
@@ -290,7 +302,7 @@ enableRobotsTXT = true
   # google_adsense = 'ca-pub-XXXXXXXXXXXXXXXX'
 
   # ========== Google Fonts ==========
-  google_fonts = 'family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700'
+  google_fonts = 'family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Space+Mono:wght@400;700'
 
   # ========== Mermaid Diagrams ==========
   # mermaid = true
@@ -304,14 +316,35 @@ enableRobotsTXT = true
     position = '25.0330;121.5654'
 
   # ========== Plugins (CSS/JS) ==========
-  [params.plugins]
-    # External CSS plugins
-    [[params.plugins.css]]
-      link = ''
+  # CSS Plugins
+  [[params.plugins.css]]
+    link = "plugins/bootstrap/bootstrap.min.css"
+  [[params.plugins.css]]
+    link = "plugins/slick/slick.css"
+  [[params.plugins.css]]
+    link = "plugins/themify-icons/themify-icons.css"
 
-    # External JS plugins
-    [[params.plugins.js]]
-      link = ''
+  # JS Plugins
+  [[params.plugins.js]]
+    link = "plugins/jQuery/jquery.min.js"
+  [[params.plugins.js]]
+    link = "plugins/bootstrap/bootstrap.min.js"
+  [[params.plugins.js]]
+    link = "plugins/slick/slick.min.js"
+  [[params.plugins.js]]
+    link = "plugins/headroom/headroom.js"
+  [[params.plugins.js]]
+    link = "plugins/masonry/masonry.js"
+  [[params.plugins.js]]
+    link = "plugins/reading-time/readingTime.min.js"
+  [[params.plugins.js]]
+    link = "plugins/smooth-scroll/smooth-scroll.js"
+  [[params.plugins.js]]
+    link = "plugins/search/fuse.min.js"
+  [[params.plugins.js]]
+    link = "plugins/search/mark.js"
+  [[params.plugins.js]]
+    link = "plugins/search/search.js"
 
 # =============================================================================
 # Menus

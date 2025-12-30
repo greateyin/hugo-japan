@@ -4,23 +4,72 @@
 {{/* Add tech-insights class to body via JavaScript */}}
 <script>document.body.classList.add('tech-insights');</script>
 
-{{/* Hero Section */}}
+{{/* Hero Carousel Section - Reading from news directory */}}
 {{ if site.Params.hero.enable }}
 <section class="ti-hero" id="home">
-  <div class="ti-hero-bg">
-    {{ with site.Params.hero.background_image }}
-    <img src="{{ . | relURL }}" alt="Hero background">
+  {{/* Get news articles from current language's news section */}}
+  {{ $newsArticles := where site.RegularPages "Section" "news" }}
+  {{ $newsArticles = $newsArticles.ByDate.Reverse }}
+  {{ $newsArticles = first 5 $newsArticles }}
+
+  {{/* Build slides from news articles */}}
+  {{ $slides := slice }}
+  {{ $newsLink := "/news/" | relLangURL }}
+  {{ range $newsArticles }}
+    {{ $slide := dict
+      "title" .Title
+      "subtitle" (default .Description (.Summary | plainify | truncate 150))
+      "image" (default "images/hero-tech.jpg" .Params.image)
+      "badge" (index (default (slice "News") .Params.categories) 0)
+      "primary_button_text" (i18n "read_more" | default "Read More")
+      "primary_button_link" .Permalink
+      "secondary_button_text" (i18n "view_all_news" | default "All News")
+      "secondary_button_link" $newsLink
+    }}
+    {{ $slides = $slides | append $slide }}
+  {{ end }}
+
+  {{/* Fallback to config slides if no news articles */}}
+  {{ if eq (len $slides) 0 }}
+    {{ $slides = site.Params.hero.slides }}
+  {{ end }}
+
+  {{/* Final fallback to legacy config */}}
+  {{ if not $slides }}
+    {{ $slides = slice (dict
+      "image" site.Params.hero.background_image
+      "badge" site.Params.hero.badge
+      "title" (printf "%s %s" site.Params.hero.title_prefix site.Params.hero.title_highlight)
+      "subtitle" site.Params.hero.subtitle
+      "primary_button_text" site.Params.hero.primary_button
+      "primary_button_link" "#articles"
+      "secondary_button_text" site.Params.hero.secondary_button
+      "secondary_button_link" "#about"
+    ) }}
+  {{ end }}
+
+  {{/* Carousel Slides */}}
+  <div class="ti-hero-carousel">
+    {{ range $index, $slide := $slides }}
+    <div class="ti-hero-slide{{ if eq $index 0 }} active{{ end }}" data-slide="{{ $index }}">
+      <div class="ti-hero-slide-bg">
+        {{ with $slide.image }}
+        <img src="{{ . | relURL }}" alt="{{ $slide.title }}">
+        {{ else }}
+        <div style="background: linear-gradient(135deg, hsl(0 0% 20%), hsl(0 0% 30%)); width: 100%; height: 100%;"></div>
+        {{ end }}
+      </div>
+    </div>
     {{ end }}
   </div>
 
-  {{/* Decorative Glows */}}
-  <div class="ti-hero-glow ti-hero-glow-1"></div>
-  <div class="ti-hero-glow ti-hero-glow-2"></div>
+  {{/* Hero Content - Shows content of active slide */}}
+  <div class="ti-hero-content" id="hero-content">
+    {{ $firstSlide := index $slides 0 }}
 
-  <div class="ti-hero-content">
     {{/* Badge */}}
-    {{ with site.Params.hero.badge }}
-    <div class="ti-hero-badge">
+    {{ with $firstSlide.badge }}
+    <div class="ti-hero-badge" id="hero-badge">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">
         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
@@ -31,20 +80,19 @@
     {{ end }}
 
     {{/* Title */}}
-    <h1 class="ti-hero-title">
-      {{ site.Params.hero.title_prefix }}
-      <span class="ti-hero-title-highlight">{{ site.Params.hero.title_highlight }}</span>
+    <h1 class="ti-hero-title" id="hero-title">
+      {{ $firstSlide.title | safeHTML }}
     </h1>
 
     {{/* Subtitle */}}
-    {{ with site.Params.hero.subtitle }}
-    <p class="ti-hero-subtitle">{{ . }}</p>
+    {{ with $firstSlide.subtitle }}
+    <p class="ti-hero-subtitle" id="hero-subtitle">{{ . }}</p>
     {{ end }}
 
     {{/* Action Buttons */}}
     <div class="ti-hero-actions">
-      {{ with site.Params.hero.primary_button }}
-      <a href="#articles" class="ti-btn ti-btn-primary ti-btn-lg">
+      {{ with $firstSlide.primary_button_text }}
+      <a href="{{ $firstSlide.primary_button_link | default "#articles" }}" class="ti-btn ti-btn-primary ti-btn-lg" id="hero-primary-btn">
         {{ . }}
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round">
@@ -53,32 +101,40 @@
         </svg>
       </a>
       {{ end }}
-      {{ with site.Params.hero.secondary_button }}
-      <a href="#about" class="ti-btn ti-btn-outline ti-btn-lg">
+      {{ with $firstSlide.secondary_button_text }}
+      <a href="{{ $firstSlide.secondary_button_link | default "#about" }}" class="ti-btn ti-btn-outline ti-btn-lg" id="hero-secondary-btn">
         {{ . }}
       </a>
       {{ end }}
     </div>
-
-    {{/* Stats - Using Real Data */}}
-    {{ $posts := where site.RegularPages "Section" "posts" }}
-    {{ $categories := site.Taxonomies.categories }}
-    {{ $tags := site.Taxonomies.tags }}
-    <div class="ti-hero-stats">
-      <div class="ti-hero-stat">
-        <div class="ti-hero-stat-value">{{ len $posts }}</div>
-        <div class="ti-hero-stat-label">{{ i18n "posts" | default "Articles" }}</div>
-      </div>
-      <div class="ti-hero-stat">
-        <div class="ti-hero-stat-value">{{ len $categories }}</div>
-        <div class="ti-hero-stat-label">{{ i18n "categories" | default "Categories" }}</div>
-      </div>
-      <div class="ti-hero-stat">
-        <div class="ti-hero-stat-value">{{ len $tags }}</div>
-        <div class="ti-hero-stat-label">{{ i18n "tags" | default "Tags" }}</div>
-      </div>
   </div>
+
+  {{/* Carousel Navigation Arrows */}}
+  {{ if gt (len $slides) 1 }}
+  <button class="ti-hero-arrow ti-hero-arrow-prev" onclick="prevSlide()" aria-label="Previous slide">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+  </button>
+  <button class="ti-hero-arrow ti-hero-arrow-next" onclick="nextSlide()" aria-label="Next slide">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </button>
+
+  {{/* Carousel Dots */}}
+  <div class="ti-hero-controls">
+    {{ range $index, $slide := $slides }}
+    <button class="ti-hero-dot{{ if eq $index 0 }} active{{ end }}" onclick="goToSlide({{ $index }})" aria-label="Go to slide {{ add $index 1 }}"></button>
+    {{ end }}
+  </div>
+  {{ end }}
 </section>
+
+{{/* Carousel Data for JavaScript */}}
+<script>
+  const heroSlides = {{ $slides | jsonify | safeJS }};
+</script>
 {{ end }}
 
 {{/* About Section */}}
@@ -202,69 +258,44 @@
   </div>
 </section>
 
-{{/* Categories Section */}}
-{{ if site.Params.categories_section.enable }}
+{{/* Categories Section - Dynamic from Hugo Taxonomy */}}
+{{ with site.Taxonomies.categories }}
+{{ if gt (len .) 0 }}
 <section class="ti-categories" id="categories">
   <div class="ti-container">
     <div class="ti-section-header ti-text-center">
-      <h2 class="ti-section-title">{{ site.Params.categories_section.title }}</h2>
-      <p class="ti-section-subtitle">{{ site.Params.categories_section.subtitle }}</p>
+      <h2 class="ti-section-title">{{ i18n "explore_topics" | default "Explore Topics" }}</h2>
+      <p class="ti-section-subtitle">{{ i18n "explore_topics_desc" | default "Browse articles by category" }}</p>
     </div>
 
     <div class="ti-categories-grid">
-      {{ range site.Params.categories_section.items }}
-      <a href="{{ printf " /categories/%s/" .slug | relURL }}" class="ti-category-card">
-        <div class="ti-category-icon {{ .color }}">
-          {{ if eq .icon "brain" }}
+      {{/* Sort categories by count (descending) and take top 6 */}}
+      {{ $categories := slice }}
+      {{ range $name, $pages := . }}
+        {{ $categories = $categories | append (dict "name" $name "count" (len $pages)) }}
+      {{ end }}
+      {{ $sorted := sort $categories "count" "desc" }}
+      {{ range first 6 $sorted }}
+      {{ $catName := .name }}
+      {{ $catCount := .count }}
+      <a href="{{ printf "categories/%s/" $catName | relLangURL }}" class="ti-category-card">
+        <div class="ti-category-icon">
+          {{/* Dynamic icon based on category name */}}
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
-            <path
-              d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.54">
-            </path>
-            <path
-              d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.54">
-            </path>
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
           </svg>
-          {{ else if eq .icon "code" }}
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="16 18 22 12 16 6"></polyline>
-            <polyline points="8 6 2 12 8 18"></polyline>
-          </svg>
-          {{ else if eq .icon "cloud" }}
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
-          </svg>
-          {{ else if eq .icon "smartphone" }}
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
-            <line x1="12" y1="18" x2="12.01" y2="18"></line>
-          </svg>
-          {{ else if eq .icon "shield" }}
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-          </svg>
-          {{ else if eq .icon "database" }}
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
-            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
-            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
-          </svg>
-          {{ end }}
         </div>
         <div>
-          <h3 class="ti-category-name">{{ .name }}</h3>
-          <p class="ti-category-count">{{ .count }} {{ i18n "posts" | default "posts" }}</p>
+          <h3 class="ti-category-name">{{ $catName | humanize | title }}</h3>
+          <p class="ti-category-count">{{ $catCount }} {{ if eq $catCount 1 }}{{ i18n "post" | default "post" }}{{ else }}{{ i18n "posts" | default "posts" }}{{ end }}</p>
         </div>
       </a>
       {{ end }}
     </div>
   </div>
 </section>
+{{ end }}
 {{ end }}
 
 {{/* Newsletter Section */}}
@@ -294,6 +325,109 @@
     </div>
   </div>
 </section>
+{{ end }}
+
+{{/* Hero Carousel JavaScript */}}
+{{ if site.Params.hero.enable }}
+<script>
+(function() {
+  // Carousel state
+  let currentSlide = 0;
+  let autoplayTimer = null;
+  const autoplayInterval = {{ site.Params.hero.autoplay_interval | default 6000 }};
+
+  // Get elements
+  const slides = document.querySelectorAll('.ti-hero-slide');
+  const dots = document.querySelectorAll('.ti-hero-dot');
+
+  if (slides.length <= 1) return; // No carousel needed for single slide
+
+  // Update slide content
+  function updateContent(slideIndex) {
+    if (typeof heroSlides === 'undefined' || !heroSlides[slideIndex]) return;
+
+    const slide = heroSlides[slideIndex];
+    const titleEl = document.getElementById('hero-title');
+    const subtitleEl = document.getElementById('hero-subtitle');
+    const badgeEl = document.getElementById('hero-badge');
+    const primaryBtn = document.getElementById('hero-primary-btn');
+    const secondaryBtn = document.getElementById('hero-secondary-btn');
+
+    if (titleEl && slide.title) titleEl.innerHTML = slide.title;
+    if (subtitleEl && slide.subtitle) subtitleEl.textContent = slide.subtitle;
+    if (badgeEl && slide.badge) {
+      const badgeSpan = badgeEl.querySelector('span');
+      if (badgeSpan) badgeSpan.textContent = slide.badge;
+    }
+    if (primaryBtn && slide.primary_button_text) {
+      primaryBtn.firstChild.textContent = slide.primary_button_text;
+      if (slide.primary_button_link) primaryBtn.href = slide.primary_button_link;
+    }
+    if (secondaryBtn && slide.secondary_button_text) {
+      secondaryBtn.textContent = slide.secondary_button_text;
+      if (slide.secondary_button_link) secondaryBtn.href = slide.secondary_button_link;
+    }
+  }
+
+  // Go to specific slide
+  window.goToSlide = function(index) {
+    slides[currentSlide].classList.remove('active');
+    dots[currentSlide].classList.remove('active');
+
+    currentSlide = index;
+    if (currentSlide >= slides.length) currentSlide = 0;
+    if (currentSlide < 0) currentSlide = slides.length - 1;
+
+    slides[currentSlide].classList.add('active');
+    dots[currentSlide].classList.add('active');
+
+    updateContent(currentSlide);
+    resetAutoplay();
+  };
+
+  // Next slide
+  window.nextSlide = function() {
+    goToSlide(currentSlide + 1);
+  };
+
+  // Previous slide
+  window.prevSlide = function() {
+    goToSlide(currentSlide - 1);
+  };
+
+  // Autoplay functions
+  function startAutoplay() {
+    if (autoplayInterval > 0) {
+      autoplayTimer = setInterval(nextSlide, autoplayInterval);
+    }
+  }
+
+  function resetAutoplay() {
+    if (autoplayTimer) {
+      clearInterval(autoplayTimer);
+      startAutoplay();
+    }
+  }
+
+  // Pause on hover
+  const heroSection = document.querySelector('.ti-hero');
+  if (heroSection) {
+    heroSection.addEventListener('mouseenter', function() {
+      if (autoplayTimer) clearInterval(autoplayTimer);
+    });
+    heroSection.addEventListener('mouseleave', startAutoplay);
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft') prevSlide();
+    if (e.key === 'ArrowRight') nextSlide();
+  });
+
+  // Start autoplay
+  startAutoplay();
+})();
+</script>
 {{ end }}
 
 {{ end }}

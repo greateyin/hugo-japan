@@ -104,7 +104,7 @@
 <div style="height: 64px;"></div>
 
 <style>
-    /* Language Switcher Styles */
+    /* Enterprise Language Switcher Styles */
     .ti-lang-switcher {
         position: relative;
     }
@@ -115,18 +115,19 @@
         gap: 0.5rem;
         padding: 0.5rem 0.75rem;
         background: transparent;
-        border: 2px solid hsl(var(--ti-border));
+        border: 1px solid hsl(var(--ti-border));
         border-radius: var(--ti-radius);
         cursor: pointer;
         font-size: 0.875rem;
         font-weight: 500;
         color: hsl(var(--ti-foreground));
         transition: var(--ti-transition-fast);
+        font-family: var(--ti-font-sans);
     }
 
     .ti-lang-btn:hover {
-        border-color: hsl(var(--ti-primary) / 0.4);
-        background: hsl(var(--ti-card));
+        border-color: hsl(var(--ti-primary));
+        color: hsl(var(--ti-primary));
     }
 
     .ti-lang-current {
@@ -146,9 +147,9 @@
         margin-top: 0.5rem;
         min-width: 150px;
         background: hsl(var(--ti-card));
-        border: 2px solid hsl(var(--ti-border));
-        border-radius: var(--ti-radius-sm);
-        box-shadow: var(--ti-shadow-soft);
+        border: 1px solid hsl(var(--ti-border));
+        border-radius: var(--ti-radius);
+        box-shadow: var(--ti-shadow-lg);
         display: none;
         z-index: 100;
         overflow: hidden;
@@ -164,6 +165,7 @@
         color: hsl(var(--ti-foreground));
         text-decoration: none;
         transition: var(--ti-transition-fast);
+        font-size: 0.875rem;
     }
 
     .ti-lang-option:hover {

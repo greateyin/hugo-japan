@@ -1,24 +1,33 @@
 {{ define "main" }}
-{{/* Tech Insights Single Post Layout */}}
+{{/* Tech Insights Single Post Layout - Enhanced Reading Experience */}}
+
+{{/* Reading Progress Bar */}}
+<div class="ti-reading-progress" id="reading-progress"></div>
 
 {{/* Check if blog post */}}
-{{ if or (eq .Section "post") (eq .Section "posts") (eq .Section "blog") (eq .Section "blogs") }}
+{{ if or (eq .Section "post") (eq .Section "posts") (eq .Section "blog") (eq .Section "blogs") (eq .Section "news") }}
 
-{{/* Post Header */}}
+{{/* Hero Header with Featured Image Background */}}
 <article class="ti-single-post">
-    <header class="ti-post-header">
-        <div class="ti-container">
+    {{ $hasImage := .Params.image }}
+    <header class="ti-post-hero{{ if $hasImage }} ti-post-hero-with-image{{ end }}" {{ with .Params.image }}style="--hero-image: url('{{ . | relURL }}')"{{ end }}>
+        <div class="ti-post-hero-overlay"></div>
+        <div class="ti-container ti-post-hero-content">
             {{/* Categories */}}
             {{ with .Params.categories }}
             <div class="ti-post-categories">
                 {{ range . }}
-                <a href="{{ " categories" | relLangURL }}/{{ . | urlize }}/" class="ti-article-badge">{{ . | humanize
-                    }}</a>
+                <a href="{{ "categories" | relLangURL }}/{{ . | urlize }}/" class="ti-hero-badge">{{ . | humanize }}</a>
                 {{ end }}
             </div>
             {{ end }}
 
             <h1 class="ti-post-title">{{ .Title }}</h1>
+
+            {{/* Description */}}
+            {{ with .Description }}
+            <p class="ti-post-description">{{ . }}</p>
+            {{ end }}
 
             {{/* Meta */}}
             <div class="ti-post-meta">
@@ -28,7 +37,7 @@
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
-                    {{ site.Params.author | default "Author" }}
+                    {{ .Params.author | default site.Params.author | default "Author" }}
                 </span>
                 <span>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -50,17 +59,14 @@
                 </span>
             </div>
         </div>
-    </header>
 
-    {{/* Featured Image */}}
-    {{ with .Params.image }}
-    <div class="ti-post-image">
-        <div class="ti-container">
-            <img src="{{ . | relURL }}" alt="{{ $.Title }}" loading="lazy"
-                onerror="this.onerror=null; this.src='/images/default.png';">
+        {{/* Scroll Indicator */}}
+        <div class="ti-scroll-indicator">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M19 12l-7 7-7-7"/>
+            </svg>
         </div>
-    </div>
-    {{ end }}
+    </header>
 
     {{/* Content */}}
     <div class="ti-post-content">
@@ -81,7 +87,7 @@
                     {{ i18n "tags" | default "Tags" }}:
                 </span>
                 {{ range . }}
-                <a href="{{ " tags" | relLangURL }}/{{ . | urlize }}/" class="ti-tag">{{ . }}</a>
+                <a href="{{ "tags" | relLangURL }}/{{ . | urlize }}/" class="ti-tag">{{ . }}</a>
                 {{ end }}
             </div>
             {{ end }}
@@ -175,40 +181,142 @@
 {{ end }}
 
 <style>
-    /* Single Post Styles */
+    /* =============================================================================
+       Reading Progress Bar
+       ============================================================================= */
+    .ti-reading-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 3px;
+        background: linear-gradient(90deg, hsl(var(--ti-primary)), hsl(var(--ti-primary) / 0.7));
+        z-index: 9999;
+        transition: width 0.1s ease-out;
+    }
+
+    /* =============================================================================
+       Hero Header with Background Image
+       ============================================================================= */
     .ti-single-post {
         background: hsl(var(--ti-background));
     }
 
-    .ti-post-header {
-        padding: 3rem 0 2rem;
-        background: linear-gradient(to bottom, hsl(var(--ti-secondary) / 0.2), hsl(var(--ti-background)));
+    .ti-post-hero {
+        position: relative;
+        min-height: 50vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6rem 1rem 4rem;
+        background: hsl(var(--ti-muted));
+        overflow: hidden;
+    }
+
+    .ti-post-hero-with-image {
+        min-height: 70vh;
+        background-image: var(--hero-image);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .ti-post-hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            to bottom,
+            hsl(0 0% 0% / 0.3) 0%,
+            hsl(0 0% 0% / 0.5) 50%,
+            hsl(0 0% 0% / 0.7) 100%
+        );
+    }
+
+    .ti-post-hero:not(.ti-post-hero-with-image) .ti-post-hero-overlay {
+        background: linear-gradient(
+            135deg,
+            hsl(var(--ti-primary) / 0.05) 0%,
+            hsl(var(--ti-muted) / 0.3) 100%
+        );
+    }
+
+    .ti-post-hero-content {
+        position: relative;
+        z-index: 10;
         text-align: center;
-    }
-
-    .ti-post-categories {
-        margin-bottom: 1rem;
-    }
-
-    .ti-post-categories .ti-article-badge {
-        text-decoration: none;
-        margin: 0 0.25rem;
-    }
-
-    .ti-post-title {
-        font-size: clamp(1.75rem, 5vw, 3rem);
-        font-family: 'Noto Serif JP', serif;
         max-width: 900px;
-        margin: 0 auto 1.5rem;
-        line-height: 1.3;
     }
 
+    .ti-post-hero-with-image .ti-post-hero-content {
+        color: #fff;
+    }
+
+    /* Categories Badge in Hero */
+    .ti-post-categories {
+        margin-bottom: 1.5rem;
+    }
+
+    .ti-hero-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: hsl(var(--ti-primary));
+        color: hsl(var(--ti-primary-foreground));
+        border-radius: var(--ti-radius);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-decoration: none;
+        margin: 0.25rem;
+        transition: var(--ti-transition);
+    }
+
+    .ti-hero-badge:hover {
+        background: hsl(var(--ti-primary) / 0.8);
+        transform: translateY(-2px);
+    }
+
+    /* Title */
+    .ti-post-title {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-family: var(--ti-font-serif);
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+        text-shadow: 0 2px 4px hsl(0 0% 0% / 0.1);
+    }
+
+    .ti-post-hero:not(.ti-post-hero-with-image) .ti-post-title {
+        color: hsl(var(--ti-foreground));
+        text-shadow: none;
+    }
+
+    /* Description */
+    .ti-post-description {
+        font-size: 1.25rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto 1.5rem;
+        line-height: 1.6;
+    }
+
+    .ti-post-hero:not(.ti-post-hero-with-image) .ti-post-description {
+        color: hsl(var(--ti-muted-foreground));
+    }
+
+    /* Meta */
     .ti-post-meta {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         gap: 1.5rem;
+        font-size: 0.875rem;
+        opacity: 0.85;
+    }
+
+    .ti-post-hero:not(.ti-post-hero-with-image) .ti-post-meta {
         color: hsl(var(--ti-muted-foreground));
+        opacity: 1;
     }
 
     .ti-post-meta span {
@@ -218,96 +326,201 @@
     }
 
     .ti-post-meta svg {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
     }
 
-    .ti-post-image {
-        padding: 2rem 0;
+    /* Scroll Indicator */
+    .ti-scroll-indicator {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: bounce 2s infinite;
+        opacity: 0.7;
     }
 
-    .ti-post-image img {
-        width: 100%;
-        max-width: 900px;
-        margin: 0 auto;
-        display: block;
-        border-radius: var(--ti-radius-lg);
-        box-shadow: var(--ti-shadow-watercolor);
+    .ti-scroll-indicator svg {
+        width: 24px;
+        height: 24px;
+        color: #fff;
     }
 
+    .ti-post-hero:not(.ti-post-hero-with-image) .ti-scroll-indicator svg {
+        color: hsl(var(--ti-muted-foreground));
+    }
+
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+        40% { transform: translateX(-50%) translateY(-10px); }
+        60% { transform: translateX(-50%) translateY(-5px); }
+    }
+
+    /* =============================================================================
+       Post Content
+       ============================================================================= */
     .ti-post-content {
-        padding: 2rem 0 4rem;
+        padding: 4rem 0;
     }
 
     .ti-post-body {
-        max-width: 800px;
+        max-width: 720px;
         margin: 0 auto;
         font-size: 1.125rem;
-        line-height: 1.8;
+        line-height: 1.9;
+        color: hsl(var(--ti-foreground));
     }
 
-    .ti-post-body h2,
-    .ti-post-body h3,
-    .ti-post-body h4 {
-        font-family: 'Noto Serif JP', serif;
-        margin-top: 2rem;
+    /* Drop Cap - First Letter */
+    .ti-post-body > p:first-of-type::first-letter {
+        float: left;
+        font-size: 4rem;
+        font-family: var(--ti-font-serif);
+        font-weight: 700;
+        line-height: 1;
+        margin-right: 0.75rem;
+        margin-top: 0.1rem;
+        color: hsl(var(--ti-primary));
+    }
+
+    .ti-post-body h2 {
+        font-size: 1.75rem;
+        font-family: var(--ti-font-serif);
+        margin-top: 3rem;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid hsl(var(--ti-border));
+    }
+
+    .ti-post-body h3 {
+        font-size: 1.375rem;
+        font-family: var(--ti-font-serif);
+        margin-top: 2.5rem;
         margin-bottom: 1rem;
     }
 
+    .ti-post-body h4 {
+        font-size: 1.125rem;
+        font-family: var(--ti-font-serif);
+        margin-top: 2rem;
+        margin-bottom: 0.75rem;
+    }
+
     .ti-post-body p {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.75rem;
     }
 
     .ti-post-body img {
         max-width: 100%;
-        border-radius: var(--ti-radius);
-        margin: 2rem 0;
+        max-height: 500px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        border-radius: var(--ti-radius-lg);
+        margin: 2.5rem auto;
+        display: block;
+        box-shadow: var(--ti-shadow-lg);
     }
 
     .ti-post-body pre {
-        background: hsl(var(--ti-foreground));
-        color: hsl(var(--ti-background));
+        background: hsl(222 47% 11%);
+        color: hsl(210 40% 98%);
         padding: 1.5rem;
-        border-radius: var(--ti-radius);
+        border-radius: var(--ti-radius-lg);
         overflow-x: auto;
-        margin: 1.5rem 0;
+        margin: 2rem 0;
+        font-size: 0.875rem;
+        box-shadow: var(--ti-shadow-card);
     }
 
     .ti-post-body code {
-        font-family: 'Fira Code', monospace;
+        font-family: var(--ti-font-mono);
+    }
+
+    .ti-post-body :not(pre) > code {
+        background: hsl(var(--ti-muted));
+        padding: 0.2rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.875em;
     }
 
     .ti-post-body blockquote {
         border-left: 4px solid hsl(var(--ti-primary));
-        padding-left: 1.5rem;
-        margin: 1.5rem 0;
+        padding: 1.5rem 1.5rem 1.5rem 2rem;
+        margin: 2rem 0;
+        background: hsl(var(--ti-muted) / 0.3);
+        border-radius: 0 var(--ti-radius) var(--ti-radius) 0;
         font-style: italic;
-        color: hsl(var(--ti-muted-foreground));
+        font-size: 1.125rem;
+    }
+
+    .ti-post-body blockquote p:last-child {
+        margin-bottom: 0;
     }
 
     .ti-post-body a {
         color: hsl(var(--ti-primary));
         text-decoration: underline;
+        text-underline-offset: 3px;
+        transition: var(--ti-transition-fast);
+    }
+
+    .ti-post-body a:hover {
+        text-decoration-thickness: 2px;
     }
 
     .ti-post-body ul,
     .ti-post-body ol {
-        margin: 1rem 0 1.5rem 1.5rem;
+        margin: 1.5rem 0 2rem 1.5rem;
     }
 
     .ti-post-body li {
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.75rem;
+        line-height: 1.7;
     }
 
-    /* Post Tags */
+    .ti-post-body hr {
+        border: none;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, hsl(var(--ti-border)), transparent);
+        margin: 3rem 0;
+    }
+
+    /* Tables */
+    .ti-post-body table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        font-size: 0.9375rem;
+    }
+
+    .ti-post-body th,
+    .ti-post-body td {
+        padding: 0.75rem 1rem;
+        border: 1px solid hsl(var(--ti-border));
+        text-align: left;
+    }
+
+    .ti-post-body th {
+        background: hsl(var(--ti-muted) / 0.5);
+        font-weight: 600;
+    }
+
+    .ti-post-body tr:hover {
+        background: hsl(var(--ti-muted) / 0.2);
+    }
+
+    /* =============================================================================
+       Post Tags
+       ============================================================================= */
     .ti-post-tags {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
         gap: 0.75rem;
         padding: 2rem 0;
-        border-top: 2px solid hsl(var(--ti-border));
-        margin-top: 2rem;
+        border-top: 1px solid hsl(var(--ti-border));
+        margin-top: 3rem;
     }
 
     .ti-post-tags-label {
@@ -315,23 +528,42 @@
         align-items: center;
         gap: 0.5rem;
         font-weight: 600;
+        font-size: 0.875rem;
     }
 
     .ti-post-tags-label svg {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
     }
 
-    /* Share */
+    .ti-tag {
+        display: inline-block;
+        padding: 0.375rem 0.875rem;
+        background: hsl(var(--ti-muted) / 0.5);
+        color: hsl(var(--ti-foreground));
+        border-radius: var(--ti-radius);
+        font-size: 0.8125rem;
+        text-decoration: none;
+        transition: var(--ti-transition);
+    }
+
+    .ti-tag:hover {
+        background: hsl(var(--ti-primary) / 0.1);
+        color: hsl(var(--ti-primary));
+    }
+
+    /* =============================================================================
+       Share Buttons
+       ============================================================================= */
     .ti-post-share {
         display: flex;
         align-items: center;
         gap: 1rem;
-        padding: 1.5rem 0;
-        border-top: 2px solid hsl(var(--ti-border));
+        padding: 2rem 0;
+        border-top: 1px solid hsl(var(--ti-border));
     }
 
-    .ti-post-share span {
+    .ti-post-share > span {
         font-weight: 600;
     }
 
@@ -344,8 +576,8 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         background: hsl(var(--ti-card));
         border: 2px solid hsl(var(--ti-border));
@@ -354,9 +586,10 @@
     }
 
     .ti-share-btn:hover {
-        background: hsl(var(--ti-primary) / 0.1);
-        border-color: hsl(var(--ti-primary) / 0.4);
-        color: hsl(var(--ti-primary));
+        background: hsl(var(--ti-primary));
+        border-color: hsl(var(--ti-primary));
+        color: hsl(var(--ti-primary-foreground));
+        transform: translateY(-2px);
     }
 
     .ti-share-btn svg {
@@ -364,17 +597,160 @@
         height: 18px;
     }
 
-    /* Related Posts */
+    /* =============================================================================
+       Related Posts
+       ============================================================================= */
     .ti-related-posts {
-        padding: 3rem 0;
-        background: linear-gradient(to bottom, hsl(var(--ti-muted) / 0.2), hsl(var(--ti-background)));
+        padding: 4rem 0;
+        background: linear-gradient(to bottom, hsl(var(--ti-muted) / 0.3), hsl(var(--ti-background)));
     }
 
+    /* =============================================================================
+       Back to Top Button
+       ============================================================================= */
+    .ti-back-to-top {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 48px;
+        height: 48px;
+        background: hsl(var(--ti-primary));
+        color: hsl(var(--ti-primary-foreground));
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px);
+        transition: var(--ti-transition);
+        box-shadow: var(--ti-shadow-lg);
+        z-index: 100;
+    }
+
+    .ti-back-to-top.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .ti-back-to-top:hover {
+        background: hsl(var(--ti-primary) / 0.9);
+        transform: translateY(-4px);
+    }
+
+    .ti-back-to-top svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    /* =============================================================================
+       Content Image (for regular pages)
+       ============================================================================= */
     .ti-content-image {
         width: 100%;
-        border-radius: var(--ti-radius);
+        border-radius: var(--ti-radius-lg);
         margin-bottom: 2rem;
+        box-shadow: var(--ti-shadow-card);
+    }
+
+    /* =============================================================================
+       Responsive
+       ============================================================================= */
+    @media (max-width: 768px) {
+        .ti-post-hero {
+            min-height: 60vh;
+            padding: 5rem 1rem 3rem;
+        }
+
+        .ti-post-hero-with-image {
+            min-height: 50vh;
+        }
+
+        .ti-post-title {
+            font-size: clamp(1.5rem, 6vw, 2.5rem);
+        }
+
+        .ti-post-description {
+            font-size: 1rem;
+        }
+
+        .ti-post-body {
+            font-size: 1rem;
+        }
+
+        .ti-post-body > p:first-of-type::first-letter {
+            font-size: 3rem;
+        }
+
+        .ti-post-content {
+            padding: 2.5rem 0;
+        }
+
+        .ti-back-to-top {
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 44px;
+            height: 44px;
+        }
+
+        .ti-scroll-indicator {
+            display: none;
+        }
     }
 </style>
+
+{{/* Back to Top Button */}}
+<button class="ti-back-to-top" id="back-to-top" aria-label="Back to top">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 19V5M5 12l7-7 7 7"/>
+    </svg>
+</button>
+
+{{/* JavaScript for Reading Progress & Back to Top */}}
+<script>
+(function() {
+    // Reading Progress Bar
+    const progressBar = document.getElementById('reading-progress');
+    const article = document.querySelector('.ti-post-content');
+
+    if (progressBar && article) {
+        window.addEventListener('scroll', function() {
+            const articleTop = article.offsetTop;
+            const articleHeight = article.offsetHeight;
+            const windowHeight = window.innerHeight;
+            const scrollY = window.scrollY;
+
+            const start = articleTop - windowHeight;
+            const end = articleTop + articleHeight - windowHeight;
+            const progress = Math.min(Math.max((scrollY - start) / (end - start), 0), 1);
+
+            progressBar.style.width = (progress * 100) + '%';
+        });
+    }
+
+    // Back to Top Button
+    const backToTop = document.getElementById('back-to-top');
+
+    if (backToTop) {
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+})();
+</script>
 
 {{ end }}
