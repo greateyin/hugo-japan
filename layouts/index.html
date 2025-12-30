@@ -285,7 +285,7 @@
       {{ range first 6 $sorted }}
       {{ $catName := .name }}
       {{ $catCount := .count }}
-      <a href="{{ printf " categories/%s/" $catName | relLangURL }}" class="ti-category-card">
+      <a href="{{ printf "categories/%s/" $catName | relLangURL }}" class="ti-category-card">
         <div class="ti-category-icon">
           {{/* Dynamic icon based on category name */}}
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
